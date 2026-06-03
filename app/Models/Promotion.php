@@ -2,11 +2,20 @@
 
 namespace App\Models;
 
+use App\Events\MenuUpdated;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Promotion extends Model
 {
+    protected static function booted(): void
+    {
+        $broadcast = fn (Promotion $promotion) => MenuUpdated::dispatch($promotion->company_id);
+
+        static::saved($broadcast);
+        static::deleted($broadcast);
+    }
+
     protected $fillable = [
         'company_id',
         'product_id',

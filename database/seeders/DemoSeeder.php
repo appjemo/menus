@@ -4,14 +4,17 @@ namespace Database\Seeders;
 
 use App\Models\Company;
 use App\Models\Product;
+use App\Models\Screen;
+use App\Models\Slot;
+use App\Models\Template;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 
 class DemoSeeder extends Seeder
 {
     /**
-     * Datos de demostración: una compañía con productos de ejemplo,
-     * y el super admin asociado para poder verla en el panel.
+     * Datos de demostración: compañía + productos + plantilla con slots + pantalla.
+     * La pantalla demo queda accesible en /play/demo-pantalla-1
      */
     public function run(): void
     {
@@ -20,7 +23,6 @@ class DemoSeeder extends Seeder
             ['name' => 'Restaurante Demo', 'is_active' => true],
         );
 
-        // Asociar el super admin (si existe) a la compañía demo
         if ($admin = User::where('email', env('ADMIN_EMAIL'))->first()) {
             $company->users()->syncWithoutDetaching([$admin->id]);
         }
@@ -40,6 +42,39 @@ class DemoSeeder extends Seeder
             );
         }
 
-        $this->command->info("Compañía demo lista: {$company->name} ({$company->products()->count()} productos)");
+        // Plantilla demo (sin video aún → el Player muestra fondo de respaldo)
+        $template = Template::updateOrCreate(
+            ['company_id' => $company->id, 'name' => 'Menú Demo'],
+            ['company_id' => $company->id, 'video_width' => 1920, 'video_height' => 1080],
+        );
+
+        // Slots: un renglón por producto (nombre + precio) en columna
+        $template->slots()->delete();
+        $y = 220;
+        foreach ($company->products()->orderBy('sort_order')->get() as $product) {
+            Slot::create([
+                'template_id' => $template->id,
+                'product_id' => $product->id,
+                'pos_x' => 240,
+                'pos_y' => $y,
+                'font_size' => 64,
+                'font_color' => '#FFFFFF',
+                'align' => 'left',
+                'show_name' => true,
+            ]);
+            $y += 140;
+        }
+
+        // Pantalla demo con token fijo y predecible para pruebas
+        Screen::updateOrCreate(
+            ['token' => 'demo-pantalla-1'],
+            [
+                'company_id' => $company->id,
+                'template_id' => $template->id,
+                'name' => 'Pantalla Demo',
+            ],
+        );
+
+        $this->command->info("Demo lista: {$company->products()->count()} productos, plantilla con {$template->slots()->count()} slots, pantalla token=demo-pantalla-1");
     }
 }
