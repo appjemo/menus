@@ -34,7 +34,9 @@ sudo apt-get install -y \
 
 echo "==> [5/8] Composer"
 if ! command -v composer >/dev/null 2>&1; then
-  curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+  curl -sS https://getcomposer.org/installer -o /tmp/composer-setup.php
+  sudo php /tmp/composer-setup.php --install-dir=/usr/local/bin --filename=composer
+  rm -f /tmp/composer-setup.php
 fi
 composer --version
 
