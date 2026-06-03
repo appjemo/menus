@@ -2,11 +2,29 @@
 
 namespace App\Models;
 
+use App\Events\MenuUpdated;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Slot extends Model
 {
+    protected static function booted(): void
+    {
+        $broadcast = function (Slot $slot) {
+            try {
+                $companyId = $slot->template?->company_id;
+                if ($companyId) {
+                    MenuUpdated::dispatch($companyId);
+                }
+            } catch (\Throwable $e) {
+                report($e);
+            }
+        };
+
+        static::saved($broadcast);
+        static::deleted($broadcast);
+    }
+
     protected $fillable = [
         'template_id',
         'product_id',

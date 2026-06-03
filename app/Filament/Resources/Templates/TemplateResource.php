@@ -5,6 +5,7 @@ namespace App\Filament\Resources\Templates;
 use App\Filament\Resources\Templates\Pages\CreateTemplate;
 use App\Filament\Resources\Templates\Pages\EditTemplate;
 use App\Filament\Resources\Templates\Pages\ListTemplates;
+use App\Filament\Resources\Templates\Pages\SlotEditor;
 use App\Filament\Resources\Templates\Schemas\TemplateForm;
 use App\Filament\Resources\Templates\Tables\TemplatesTable;
 use App\Models\Template;
@@ -43,6 +44,7 @@ class TemplateResource extends Resource
             'index' => ListTemplates::route('/'),
             'create' => CreateTemplate::route('/create'),
             'edit' => EditTemplate::route('/{record}/edit'),
+            'slots' => SlotEditor::route('/{record}/slots'),
         ];
     }
 }
