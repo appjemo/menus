@@ -32,12 +32,10 @@ class UserResource extends Resource
     // El scope por compañía (muchos-a-muchos) lo manejamos manualmente
     protected static bool $isScopedToTenant = false;
 
-    // Solo super admin o administradores de compañía gestionan usuarios
+    // Solo JEMO (super admin) gestiona usuarios
     public static function canAccess(): bool
     {
-        $user = Auth::user();
-
-        return (bool) ($user?->isSuperAdmin() || $user?->hasRole('admin'));
+        return (bool) Auth::user()?->isSuperAdmin();
     }
 
     // Lista solo usuarios de la compañía (tenant) actual

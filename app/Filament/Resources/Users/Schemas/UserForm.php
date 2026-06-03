@@ -6,7 +6,6 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Facades\Auth;
 
 class UserForm
 {
@@ -38,10 +37,8 @@ class UserForm
                     ->relationship(
                         name: 'roles',
                         titleAttribute: 'name',
-                        // Un admin de compañía no puede asignar super_admin
-                        modifyQueryUsing: fn (Builder $query) => Auth::user()?->isSuperAdmin()
-                            ? $query
-                            : $query->where('name', '!=', 'super_admin'),
+                        // El rol super_admin es exclusivo de JEMO: nunca asignable desde aquí
+                        modifyQueryUsing: fn (Builder $query) => $query->where('name', '!=', 'super_admin'),
                     )
                     ->multiple()
                     ->preload()
