@@ -47,9 +47,10 @@ fi
 # Configurar valores clave (idempotente con sed)
 set_env() { local k="$1" v="$2"; if grep -q "^${k}=" .env; then sudo sed -i "s|^${k}=.*|${k}=${v}|" .env; else echo "${k}=${v}" >> .env; fi; }
 set_env APP_NAME "JEMO_Menus"
-set_env APP_ENV "local"
-set_env APP_DEBUG "true"
-set_env APP_URL "http://35.232.83.116"
+set_env APP_ENV "production"
+set_env APP_DEBUG "false"
+set_env APP_URL "https://menus.wearejemo.com"
+set_env BROADCAST_CONNECTION "reverb"
 set_env DB_CONNECTION "mysql"
 set_env DB_HOST "127.0.0.1"
 set_env DB_PORT "3306"
@@ -67,7 +68,8 @@ echo "==> [6/9] Permisos (storage y bootstrap/cache para www-data)"
 sudo chgrp -R www-data storage bootstrap/cache
 sudo chmod -R ug+rwx storage bootstrap/cache
 
-echo "==> [7/9] Nginx vhost"
+echo "==> [7/9] Nginx vhost (solo si no existe; el SSL/proxy lo gestiona reverb_setup.sh)"
+if [ ! -f /etc/nginx/sites-available/menus ]; then
 sudo tee /etc/nginx/sites-available/menus >/dev/null <<NGINX
 server {
     listen 80;
@@ -80,9 +82,6 @@ server {
     location / {
         try_files \$uri \$uri/ /index.php?\$query_string;
     }
-
-    location = /favicon.ico { access_log off; log_not_found off; }
-    location = /robots.txt  { access_log off; log_not_found off; }
 
     error_page 404 /index.php;
 
@@ -99,15 +98,21 @@ server {
 NGINX
 sudo ln -sf /etc/nginx/sites-available/menus /etc/nginx/sites-enabled/menus
 sudo rm -f /etc/nginx/sites-enabled/default
+fi
 
-echo "==> [8/9] Permitir a www-data leer la app (ACL en /var/www/menus)"
+echo "==> [8/9] Permisos + cachés de producción"
 sudo chmod o+x /var/www /var/www/menus
+php artisan config:cache
+php artisan route:cache
+php artisan view:cache
+php artisan event:cache
 
-echo "==> [9/9] Recargar Nginx"
-sudo nginx -t
-sudo systemctl reload nginx
+echo "==> [9/9] Recargar servicios"
+sudo nginx -t && sudo systemctl reload nginx
+sudo systemctl reload php8.4-fpm
+sudo systemctl restart reverb || true
 
 echo "===================================================="
 echo "DEPLOY_APP_DONE"
-echo "URL: http://35.232.83.116"
+echo "URL: https://menus.wearejemo.com"
 echo "DB:  ${DB_NAME} / ${DB_USER}"

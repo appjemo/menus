@@ -72,10 +72,10 @@ class User extends Authenticatable implements FilamentUser, HasTenants
     }
 
     /**
-     * Acceso al panel. En producción se restringirá (p. ej. exigir rol).
+     * Acceso al panel: solo super admin o usuarios asociados a alguna compañía.
      */
     public function canAccessPanel(Panel $panel): bool
     {
-        return true;
+        return $this->isSuperAdmin() || $this->companies()->exists();
     }
 }
