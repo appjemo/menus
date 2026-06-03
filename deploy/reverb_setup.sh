@@ -25,7 +25,16 @@ server {
     root /var/www/menus/public;
     index index.php;
     charset utf-8;
-    client_max_body_size 100M;
+    client_max_body_size 210M;
+
+    # Security headers
+    add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
+    add_header X-Content-Type-Options "nosniff" always;
+    add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+    add_header X-Frame-Options "SAMEORIGIN" always;
+
+    # Correct MIME for the PWA manifest
+    location = /manifest.webmanifest { default_type application/manifest+json; }
 
     # WebSocket de Laravel Reverb (clientes se conectan a wss://host/app/{key})
     location /app {
