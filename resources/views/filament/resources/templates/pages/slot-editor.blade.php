@@ -30,43 +30,23 @@
         {{-- Escenario: video + slots arrastrables --}}
         <div class="overflow-auto rounded-xl bg-gray-950 p-4">
             <div
-                x-data="{
-                    scale: {{ $scale }},
-                    dragEl: null,
-                    dragId: null,
-                    offX: 0,
-                    offY: 0,
-                    down(e, id) {
-                        if (e.target.closest('[data-controls]')) return;
-                        this.dragId = id;
-                        this.dragEl = e.currentTarget;
-                        const r = this.dragEl.getBoundingClientRect();
-                        this.offX = e.clientX - r.left;
-                        this.offY = e.clientY - r.top;
-                        this.dragEl.style.cursor = 'grabbing';
-                        e.preventDefault();
-                    },
-                    onMove(e) {
-                        if (! this.dragEl) return;
-                        const s = this.$refs.stage.getBoundingClientRect();
-                        let x = Math.max(0, Math.min(e.clientX - s.left - this.offX, s.width));
-                        let y = Math.max(0, Math.min(e.clientY - s.top - this.offY, s.height));
-                        this.dragEl.style.left = x + 'px';
-                        this.dragEl.style.top = y + 'px';
-                    },
-                    onUp() {
-                        if (! this.dragEl) return;
-                        const x = Math.round(parseFloat(this.dragEl.style.left) / this.scale);
-                        const y = Math.round(parseFloat(this.dragEl.style.top) / this.scale);
-                        const id = this.dragId;
-                        if (this.dragEl) this.dragEl.style.cursor = 'grab';
-                        this.dragEl = null;
-                        this.dragId = null;
-                        this.$wire.updatePosition(id, x, y);
-                    },
-                }"
-                x-on:mousemove.window="onMove($event)"
-                x-on:mouseup.window="onUp()"
+                x-data="{ scale: {{ $scale }}, el: null, id: null, sx: 0, sy: 0 }"
+                x-on:mousemove.window="
+                    if (el) {
+                        const s = $refs.stage.getBoundingClientRect();
+                        el.style.left = Math.max(0, Math.min($event.clientX - s.left - sx, s.width)) + 'px';
+                        el.style.top = Math.max(0, Math.min($event.clientY - s.top - sy, s.height)) + 'px';
+                    }
+                "
+                x-on:mouseup.window="
+                    if (el) {
+                        const x = Math.round(parseFloat(el.style.left) / scale);
+                        const y = Math.round(parseFloat(el.style.top) / scale);
+                        el.style.cursor = 'grab';
+                        el = null;
+                        $wire.updatePosition(id, x, y);
+                    }
+                "
                 class="relative mx-auto"
                 style="width: {{ $displayW }}px; height: {{ $displayH }}px;"
             >
@@ -83,7 +63,15 @@
                     @foreach ($record->slots as $slot)
                         <div
                             wire:key="slot-{{ $slot->id }}"
-                            x-on:mousedown="down($event, {{ $slot->id }})"
+                            x-on:mousedown="
+                                if ($event.target.closest('[data-controls]')) return;
+                                el = $el; id = {{ $slot->id }};
+                                const r = $el.getBoundingClientRect();
+                                sx = $event.clientX - r.left;
+                                sy = $event.clientY - r.top;
+                                $el.style.cursor = 'grabbing';
+                                $event.preventDefault();
+                            "
                             class="group absolute select-none"
                             style="left: {{ $slot->pos_x * $scale }}px; top: {{ $slot->pos_y * $scale }}px; cursor: grab;"
                         >
