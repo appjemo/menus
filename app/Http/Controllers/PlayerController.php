@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\Screen;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class PlayerController extends Controller
@@ -93,7 +92,10 @@ class PlayerController extends Controller
             return $path;
         }
 
-        return Storage::disk('gcs')->url($path);
+        // URL pública del bucket (uniform access + IAM allUsers:objectViewer)
+        $base = rtrim((string) config('filesystems.disks.gcs.url'), '/');
+
+        return $base.'/'.ltrim($path, '/');
     }
 
     private function touchHeartbeat(Screen $screen): void

@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\ServiceProvider;
 use League\Flysystem\Filesystem;
 use League\Flysystem\GoogleCloudStorage\GoogleCloudStorageAdapter;
+use League\Flysystem\GoogleCloudStorage\UniformBucketLevelAccessVisibility;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -35,7 +36,13 @@ class AppServiceProvider extends ServiceProvider
             ]);
 
             $bucket = $client->bucket($config['bucket']);
-            $adapter = new GoogleCloudStorageAdapter($bucket, $config['path_prefix'] ?? '');
+            // El bucket usa uniform bucket-level access: no se setean ACL por objeto
+            // (la visibilidad pública se controla por IAM del bucket).
+            $adapter = new GoogleCloudStorageAdapter(
+                $bucket,
+                $config['path_prefix'] ?? '',
+                new UniformBucketLevelAccessVisibility(),
+            );
 
             return new FilesystemAdapter(new Filesystem($adapter), $adapter, $config);
         });
