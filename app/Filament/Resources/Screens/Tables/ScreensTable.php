@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Screens\Tables;
 
+use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
@@ -14,30 +15,36 @@ class ScreensTable
     {
         return $table
             ->columns([
-                TextColumn::make('company.name')
-                    ->searchable(),
-                TextColumn::make('template.name')
-                    ->searchable(),
                 TextColumn::make('name')
+                    ->label('Pantalla')
+                    ->searchable()
+                    ->sortable(),
+                TextColumn::make('template.name')
+                    ->label('Plantilla')
                     ->searchable(),
                 TextColumn::make('token')
+                    ->label('Token')
+                    ->badge()
+                    ->copyable()
+                    ->copyMessage('Token copiado')
                     ->searchable(),
                 TextColumn::make('last_seen_at')
+                    ->label('Última vez vista')
                     ->dateTime()
+                    ->since()
+                    ->placeholder('Nunca')
                     ->sortable(),
-                TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 //
             ])
             ->recordActions([
+                Action::make('ver')
+                    ->label('Ver')
+                    ->icon('heroicon-o-play')
+                    ->color('primary')
+                    ->url(fn ($record) => url("/play/{$record->token}"))
+                    ->openUrlInNewTab(),
                 EditAction::make(),
             ])
             ->toolbarActions([
