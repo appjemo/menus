@@ -3,6 +3,8 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="theme-color" content="#000000">
+    <link rel="manifest" href="/manifest.webmanifest">
     <title>{{ $screen->name }} — JEMO Menus</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -147,6 +149,17 @@
 
         // --- Fallback: refrescar cada 60s por si se perdió algún evento ---
         setInterval(refreshMenu, 60000);
+
+        // --- Service Worker: cache de video + menú para modo offline ---
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js').catch(() => {});
+            });
+        }
+
+        // Al volver la conexión, refrescar el menú de inmediato
+        window.addEventListener('online', refreshMenu);
+        window.addEventListener('offline', () => statusDot.classList.add('offline'));
     </script>
 </body>
 </html>
