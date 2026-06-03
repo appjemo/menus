@@ -10,11 +10,11 @@
 <x-filament-panels::page>
     <div class="space-y-4">
         {{-- Barra de herramientas --}}
-        <div class="flex flex-wrap items-end gap-3 rounded-xl bg-white p-4 shadow-sm dark:bg-gray-900">
+        <div class="flex flex-wrap items-end gap-3 rounded-xl bg-white p-4 shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10">
             <div class="flex-1 min-w-64">
-                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Agregar precio de un producto</label>
+                <label class="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-200">Agregar precio de un producto</label>
                 <select wire:model="newProductId"
-                    class="mt-1 block w-full rounded-lg border-gray-300 text-sm dark:bg-gray-800 dark:border-gray-700">
+                    class="block w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 shadow-sm transition focus:border-primary-500 focus:ring-1 focus:ring-primary-500 dark:border-white/10 dark:bg-white/5 dark:text-gray-100">
                     <option value="">— Selecciona un producto —</option>
                     @foreach ($this->products as $p)
                         <option value="{{ $p->id }}">{{ $p->name }} (${{ number_format((float) $p->price, 2) }})</option>
@@ -76,7 +76,7 @@
                             style="left: {{ $slot->pos_x * $scale }}px; top: {{ $slot->pos_y * $scale }}px; cursor: grab;"
                         >
                             <div class="whitespace-nowrap font-extrabold leading-tight"
-                                 style="font-size: {{ max(8, $slot->font_size * $scale) }}px; color: {{ $slot->font_color }}; text-shadow: 0 2px 6px rgba(0,0,0,.7);">
+                                 style="font-size: {{ max(8, $slot->font_size * $scale) }}px; color: {{ $slot->font_color }}; font-family: {{ $slot->font_family ?: 'inherit' }}; text-shadow: 0 2px 6px rgba(0,0,0,.7);">
                                 @if ($slot->show_name)
                                     <div style="font-weight:600;">{{ $slot->product?->name ?? $slot->label ?? 'Texto' }}</div>
                                 @endif
@@ -84,16 +84,30 @@
                             </div>
 
                             {{-- Controles: no inician arrastre (mousedown.stop) --}}
-                            <div data-controls class="absolute -top-8 left-0 flex gap-1 opacity-0 transition group-hover:opacity-100">
-                                <button type="button" x-on:mousedown.stop
+                            <div data-controls x-on:mousedown.stop
+                                 class="absolute -top-10 left-0 flex items-center gap-1 rounded-lg bg-gray-900/95 px-1.5 py-1 opacity-0 shadow-lg ring-1 ring-white/10 transition group-hover:opacity-100">
+                                <button type="button"
                                     wire:click="setFontSize({{ $slot->id }}, {{ max(12, $slot->font_size - 8) }})"
-                                    class="rounded bg-gray-800 px-2 py-0.5 text-xs font-semibold text-white shadow">A-</button>
-                                <button type="button" x-on:mousedown.stop
+                                    class="rounded bg-gray-700 px-2 py-0.5 text-xs font-semibold text-white hover:bg-gray-600">A-</button>
+                                <button type="button"
                                     wire:click="setFontSize({{ $slot->id }}, {{ $slot->font_size + 8 }})"
-                                    class="rounded bg-gray-800 px-2 py-0.5 text-xs font-semibold text-white shadow">A+</button>
-                                <button type="button" x-on:mousedown.stop
+                                    class="rounded bg-gray-700 px-2 py-0.5 text-xs font-semibold text-white hover:bg-gray-600">A+</button>
+                                <input type="color" value="{{ $slot->font_color }}"
+                                    x-on:change="$wire.setColor({{ $slot->id }}, $event.target.value)"
+                                    title="Color del texto"
+                                    class="h-6 w-6 cursor-pointer rounded border-0 bg-transparent p-0">
+                                <select
+                                    x-on:change="$wire.setFontFamily({{ $slot->id }}, $event.target.value)"
+                                    title="Tipografía"
+                                    class="h-6 rounded border-0 bg-gray-700 py-0 pl-1 pr-5 text-xs text-white">
+                                    <option value="">Fuente…</option>
+                                    @foreach (\App\Filament\Resources\Templates\Pages\SlotEditor::FONTS as $css => $label)
+                                        <option value="{{ $css }}" @selected($slot->font_family === $css)>{{ $label }}</option>
+                                    @endforeach
+                                </select>
+                                <button type="button"
                                     wire:click="removeSlot({{ $slot->id }})"
-                                    class="rounded bg-red-600 px-2 py-0.5 text-xs font-semibold text-white shadow">✕</button>
+                                    class="rounded bg-red-600 px-2 py-0.5 text-xs font-semibold text-white hover:bg-red-500">✕</button>
                             </div>
                         </div>
                     @endforeach

@@ -103,4 +103,47 @@ class SlotEditor extends Page
 
         $this->record->load('slots.product');
     }
+
+    public function setColor(int $slotId, string $color): void
+    {
+        // Solo aceptar hex tipo #RRGGBB
+        if (! preg_match('/^#[0-9A-Fa-f]{6}$/', $color)) {
+            return;
+        }
+
+        $slot = $this->record->slots()->find($slotId);
+
+        if ($slot) {
+            $slot->update(['font_color' => strtoupper($color)]);
+        }
+
+        $this->record->load('slots.product');
+    }
+
+    public function setFontFamily(int $slotId, ?string $family): void
+    {
+        $allowed = array_keys(self::FONTS);
+
+        $slot = $this->record->slots()->find($slotId);
+
+        if ($slot) {
+            $slot->update([
+                'font_family' => in_array($family, $allowed, true) ? $family : null,
+            ]);
+        }
+
+        $this->record->load('slots.product');
+    }
+
+    /** Tipografías disponibles: clave = valor CSS (con comillas simples), valor = etiqueta. */
+    public const FONTS = [
+        'Arial, sans-serif' => 'Arial',
+        'Helvetica, Arial, sans-serif' => 'Helvetica',
+        'Georgia, serif' => 'Georgia',
+        "'Times New Roman', serif" => 'Times New Roman',
+        "'Trebuchet MS', sans-serif" => 'Trebuchet MS',
+        'Verdana, sans-serif' => 'Verdana',
+        'Impact, sans-serif' => 'Impact',
+        "'Courier New', monospace" => 'Courier New',
+    ];
 }
