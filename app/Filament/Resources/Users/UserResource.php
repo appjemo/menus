@@ -9,16 +9,48 @@ use App\Filament\Resources\Users\Schemas\UserForm;
 use App\Filament\Resources\Users\Tables\UsersTable;
 use App\Models\User;
 use BackedEnum;
+use Filament\Facades\Filament;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Auth;
 
 class UserResource extends Resource
 {
     protected static ?string $model = User::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedUsers;
+
+    protected static ?string $navigationLabel = 'Usuarios';
+
+    protected static ?string $modelLabel = 'usuario';
+
+    protected static ?string $pluralModelLabel = 'usuarios';
+
+    // El scope por compañía (muchos-a-muchos) lo manejamos manualmente
+    protected static bool $isScopedToTenant = false;
+
+    // Solo super admin o administradores de compañía gestionan usuarios
+    public static function canAccess(): bool
+    {
+        $user = Auth::user();
+
+        return (bool) ($user?->isSuperAdmin() || $user?->hasRole('admin'));
+    }
+
+    // Lista solo usuarios de la compañía (tenant) actual
+    public static function getEloquentQuery(): Builder
+    {
+        $tenant = Filament::getTenant();
+
+        return parent::getEloquentQuery()
+            ->when($tenant, fn (Builder $q) => $q->whereHas(
+                'companies',
+                fn (Builder $sub) => $sub->whereKey($tenant->getKey()),
+            ));
+    }
 
     public static function form(Schema $schema): Schema
     {

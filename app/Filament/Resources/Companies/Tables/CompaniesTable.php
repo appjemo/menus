@@ -5,8 +5,8 @@ namespace App\Filament\Resources\Companies\Tables;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
-use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Table;
 
 class CompaniesTable
@@ -16,19 +16,22 @@ class CompaniesTable
         return $table
             ->columns([
                 TextColumn::make('name')
-                    ->searchable(),
+                    ->label('Restaurante')
+                    ->searchable()
+                    ->sortable(),
                 TextColumn::make('slug')
+                    ->label('Identificador')
                     ->searchable(),
-                IconColumn::make('is_active')
-                    ->boolean(),
-                TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('users_count')
+                    ->label('Usuarios')
+                    ->counts('users')
+                    ->badge(),
+                TextColumn::make('products_count')
+                    ->label('Productos')
+                    ->counts('products')
+                    ->badge(),
+                ToggleColumn::make('is_active')
+                    ->label('Activa'),
             ])
             ->filters([
                 //

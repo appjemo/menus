@@ -13,12 +13,28 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use Illuminate\Support\Facades\Auth;
 
 class CompanyResource extends Resource
 {
     protected static ?string $model = Company::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedBuildingOffice2;
+
+    protected static ?string $navigationLabel = 'Compañías';
+
+    protected static ?string $modelLabel = 'compañía';
+
+    protected static ?string $pluralModelLabel = 'compañías';
+
+    // Las compañías son globales (no pertenecen a un tenant)
+    protected static bool $isScopedToTenant = false;
+
+    // Solo el super admin (JEMO) gestiona compañías
+    public static function canAccess(): bool
+    {
+        return (bool) Auth::user()?->isSuperAdmin();
+    }
 
     public static function form(Schema $schema): Schema
     {
