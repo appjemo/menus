@@ -2,13 +2,12 @@
 
 namespace App\Providers;
 
+use App\Filesystem\PublicGcsAdapter;
 use Google\Cloud\Storage\StorageClient;
 use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\ServiceProvider;
 use League\Flysystem\Filesystem;
-use League\Flysystem\GoogleCloudStorage\GoogleCloudStorageAdapter;
-use League\Flysystem\GoogleCloudStorage\UniformBucketLevelAccessVisibility;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -36,12 +35,12 @@ class AppServiceProvider extends ServiceProvider
             ]);
 
             $bucket = $client->bucket($config['bucket']);
-            // El bucket usa uniform bucket-level access: no se setean ACL por objeto
-            // (la visibilidad pública se controla por IAM del bucket).
-            $adapter = new GoogleCloudStorageAdapter(
+            // PublicGcsAdapter: uniform bucket-level access (sin ACL por objeto) +
+            // getUrl() para que Laravel 13 genere URLs públicas.
+            $adapter = new PublicGcsAdapter(
                 $bucket,
                 $config['path_prefix'] ?? '',
-                new UniformBucketLevelAccessVisibility(),
+                $config['url'],
             );
 
             return new FilesystemAdapter(new Filesystem($adapter), $adapter, $config);
