@@ -57,9 +57,11 @@ set_env DB_DATABASE "${DB_NAME}"
 set_env DB_USERNAME "${DB_USER}"
 set_env DB_PASSWORD "${DB_PASS}"
 
-echo "==> [5/9] App key + migraciones"
+echo "==> [5/9] App key + migraciones + assets Filament + storage link"
 php artisan key:generate --force
 php artisan migrate --force
+php artisan filament:assets
+php artisan storage:link || true
 
 echo "==> [6/9] Permisos (storage y bootstrap/cache para www-data)"
 sudo chgrp -R www-data storage bootstrap/cache
