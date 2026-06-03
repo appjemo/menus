@@ -9,22 +9,10 @@
 
 <x-filament-panels::page>
     <div class="space-y-4">
-        {{-- Barra de herramientas --}}
-        <div class="flex flex-wrap items-end gap-3 rounded-xl bg-white p-4 shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10">
-            <div class="flex-1 min-w-64">
-                <label class="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-200">Agregar precio de un producto</label>
-                <select wire:model="newProductId"
-                    class="block w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 shadow-sm transition focus:border-primary-500 focus:ring-1 focus:ring-primary-500 dark:border-white/10 dark:bg-white/5 dark:text-gray-100">
-                    <option value="">— Selecciona un producto —</option>
-                    @foreach ($this->products as $p)
-                        <option value="{{ $p->id }}">{{ $p->name }} (${{ number_format((float) $p->price, 2) }})</option>
-                    @endforeach
-                </select>
-            </div>
-            <x-filament::button wire:click="addSlot($wire.newProductId)" icon="heroicon-o-plus">
-                Agregar al video
-            </x-filament::button>
-            <span class="text-sm text-gray-500">Arrastra cada precio para posicionarlo. Se guarda solo.</span>
+        {{-- Instrucciones --}}
+        <div class="flex items-center gap-2 rounded-xl bg-white p-4 text-sm text-gray-600 shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:text-gray-300 dark:ring-white/10">
+            <x-filament::icon icon="heroicon-o-cursor-arrow-rays" class="h-5 w-5 text-primary-500" />
+            Usa <strong class="font-semibold">“Agregar precio”</strong> (arriba a la derecha) para colocar un producto. Luego <strong class="font-semibold">arrastra</strong> cada precio sobre el video; al pasar el cursor por encima puedes cambiar tamaño, color y tipografía. Todo se guarda solo.
         </div>
 
         {{-- Escenario: video + slots arrastrables --}}

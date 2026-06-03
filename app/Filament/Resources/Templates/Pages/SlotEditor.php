@@ -3,6 +3,8 @@
 namespace App\Filament\Resources\Templates\Pages;
 
 use App\Filament\Resources\Templates\TemplateResource;
+use Filament\Actions\Action;
+use Filament\Forms\Components\Select;
 use Filament\Resources\Pages\Concerns\InteractsWithRecord;
 use Filament\Resources\Pages\Page;
 use Illuminate\Support\Str;
@@ -18,12 +20,32 @@ class SlotEditor extends Page
 
     protected string $view = 'filament.resources.templates.pages.slot-editor';
 
-    public ?int $newProductId = null;
-
     public function mount(int|string $record): void
     {
         $this->record = $this->resolveRecord($record);
         $this->record->load(['slots.product', 'company']);
+    }
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            Action::make('addSlot')
+                ->label('Agregar precio')
+                ->icon('heroicon-o-plus')
+                ->modalHeading('Agregar precio al video')
+                ->modalSubmitActionLabel('Agregar')
+                ->schema([
+                    Select::make('product_id')
+                        ->label('Producto')
+                        ->options(fn () => $this->record->company
+                            ? $this->record->company->products()->orderBy('sort_order')->pluck('name', 'id')
+                            : [])
+                        ->searchable()
+                        ->preload()
+                        ->required(),
+                ])
+                ->action(fn (array $data) => $this->addSlot((int) $data['product_id'])),
+        ];
     }
 
     public function getTitle(): string
