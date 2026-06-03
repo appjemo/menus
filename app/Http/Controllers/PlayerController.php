@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Screen;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class PlayerController extends Controller
 {
@@ -68,13 +70,30 @@ class PlayerController extends Controller
             'company_id' => $screen->company_id,
             'screen' => $screen->name,
             'template' => $template ? [
-                'video_url' => $template->video_path,
+                'video_url' => $this->videoUrl($template->video_path),
                 'width' => $template->video_width,
                 'height' => $template->video_height,
             ] : null,
             'slots' => $slots,
             'generated_at' => Carbon::now()->toIso8601String(),
         ];
+    }
+
+    /**
+     * URL pública del video. Si ya es una URL completa la usa; si es una clave
+     * en GCS, construye la URL pública del bucket.
+     */
+    private function videoUrl(?string $path): ?string
+    {
+        if (! $path) {
+            return null;
+        }
+
+        if (Str::startsWith($path, ['http://', 'https://'])) {
+            return $path;
+        }
+
+        return Storage::disk('gcs')->url($path);
     }
 
     private function touchHeartbeat(Screen $screen): void

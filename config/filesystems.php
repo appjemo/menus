@@ -60,6 +60,18 @@ return [
             'report' => false,
         ],
 
+        // Google Cloud Storage para los videos de las plantillas (After Effects)
+        'gcs' => [
+            'driver' => 'gcs',
+            'key_file_path' => storage_path('app/gcs-key.json'),
+            'project_id' => env('GCS_PROJECT_ID', 'augmented-card-473921-s4'),
+            'bucket' => env('GCS_BUCKET', 'menus-videos-augmented-card-473921'),
+            'path_prefix' => env('GCS_PATH_PREFIX', ''),
+            'url' => env('GCS_URL', 'https://storage.googleapis.com/menus-videos-augmented-card-473921'),
+            'visibility' => 'public',
+            'throw' => false,
+        ],
+
     ],
 
     /*

@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Templates\Schemas;
 
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
 
@@ -16,10 +17,16 @@ class TemplateForm
                     ->placeholder('Ej: Menú Almuerzo')
                     ->required()
                     ->maxLength(255),
-                TextInput::make('video_path')
-                    ->label('Ruta/URL del video (Google Cloud Storage)')
-                    ->helperText('Más adelante esto será una subida directa a GCS.')
-                    ->maxLength(255),
+                FileUpload::make('video_path')
+                    ->label('Video de fondo (.mp4)')
+                    ->helperText('Sube el .mp4 exportado de After Effects (sin precios). Se guarda en Google Cloud Storage.')
+                    ->disk('gcs')
+                    ->directory('videos')
+                    ->visibility('public')
+                    ->acceptedFileTypes(['video/mp4'])
+                    ->maxSize(204800) // 200 MB
+                    ->downloadable()
+                    ->columnSpanFull(),
                 TextInput::make('video_width')
                     ->label('Ancho del video (px)')
                     ->required()
