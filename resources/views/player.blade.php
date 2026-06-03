@@ -35,6 +35,8 @@
         }
         .slot .name { font-weight: 600; opacity: .95; }
         .slot .price::before { content: "$"; }
+        .slot .orig { font-size: .55em; opacity: .7; text-decoration: line-through; margin-right: .3em; font-weight: 600; }
+        .slot .orig::before { content: "$"; }
         /* Indicador de desconexión (discreto) */
         #status {
             position: fixed; bottom: 10px; right: 12px; z-index: 50;
@@ -98,6 +100,13 @@
                     el.appendChild(n);
                 }
                 if (slot.price !== null && slot.price !== undefined) {
+                    // Precio original tachado si hay promoción vigente
+                    if (slot.is_promo && slot.original_price) {
+                        const o = document.createElement('span');
+                        o.className = 'orig';
+                        o.textContent = slot.original_price;
+                        el.appendChild(o);
+                    }
                     const p = document.createElement('span');
                     p.className = 'price';
                     p.textContent = slot.price;

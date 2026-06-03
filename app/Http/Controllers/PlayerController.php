@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Promotion;
 use App\Models\Screen;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 
 class PlayerController extends Controller
@@ -45,11 +47,27 @@ class PlayerController extends Controller
         $screen->loadMissing('template.slots.product');
         $template = $screen->template;
 
+        // Active promotions for this company, keyed by product (best deal first)
+        $promosByProduct = $this->activePromotions($screen->company_id);
+
         $slots = [];
 
         if ($template) {
             foreach ($template->slots as $slot) {
                 $product = $slot->product;
+
+                $price = $product?->price;
+                $originalPrice = null;
+                $isPromo = false;
+
+                if ($product) {
+                    $promo = $promosByProduct->get($product->id)?->first();
+                    if ($promo) {
+                        $originalPrice = $product->price;
+                        $price = $promo->promo_price;
+                        $isPromo = true;
+                    }
+                }
 
                 $slots[] = [
                     'pos_x' => $slot->pos_x,
@@ -60,7 +78,9 @@ class PlayerController extends Controller
                     'align' => $slot->align,
                     'show_name' => (bool) $slot->show_name,
                     'name' => $product?->name ?? $slot->label,
-                    'price' => $product ? number_format((float) $product->price, 2) : null,
+                    'price' => $price !== null ? number_format((float) $price, 2) : null,
+                    'original_price' => $originalPrice !== null ? number_format((float) $originalPrice, 2) : null,
+                    'is_promo' => $isPromo,
                 ];
             }
         }
@@ -76,6 +96,26 @@ class PlayerController extends Controller
             'slots' => $slots,
             'generated_at' => Carbon::now()->toIso8601String(),
         ];
+    }
+
+    /**
+     * Promociones vigentes de la compañía, agrupadas por product_id y ordenadas
+     * por mejor precio (la primera de cada grupo es la de menor promo_price).
+     */
+    private function activePromotions(int $companyId): Collection
+    {
+        $now = Carbon::now();
+
+        return Promotion::query()
+            ->where('company_id', $companyId)
+            ->where('is_active', true)
+            ->whereNotNull('product_id')
+            ->whereNotNull('promo_price')
+            ->where(fn ($q) => $q->whereNull('starts_at')->orWhere('starts_at', '<=', $now))
+            ->where(fn ($q) => $q->whereNull('ends_at')->orWhere('ends_at', '>=', $now))
+            ->orderBy('promo_price')
+            ->get()
+            ->groupBy('product_id');
     }
 
     /**
