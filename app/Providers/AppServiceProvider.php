@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\Filesystem\PublicGcsAdapter;
 use Google\Cloud\Storage\StorageClient;
 use Illuminate\Filesystem\FilesystemAdapter;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\ServiceProvider;
 use League\Flysystem\Filesystem;
@@ -24,6 +25,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // El super admin (JEMO) tiene acceso total (bypassa todas las policies)
+        Gate::before(fn ($user, $ability) => $user->hasRole('super_admin') ? true : null);
+
         // Permitir subidas temporales grandes en Livewire (videos hasta 200 MB)
         config(['livewire.temporary_file_upload.rules' => ['file', 'max:204800']]);
 

@@ -14,9 +14,11 @@ class ProductsTable
 {
     public static function configure(Table $table): Table
     {
+        $canEdit = fn (): bool => (bool) auth()->user()?->can('product.update');
+
         return $table
             ->defaultSort('sort_order')
-            ->reorderable('sort_order')
+            ->reorderable('sort_order', $canEdit())
             ->columns([
                 TextColumn::make('name')
                     ->label('Product')
@@ -31,9 +33,11 @@ class ProductsTable
                     ->label('Price')
                     ->type('number')
                     ->rules(['numeric', 'min:0'])
+                    ->disabled(fn (): bool => ! $canEdit())
                     ->sortable(),
                 ToggleColumn::make('is_active')
-                    ->label('Active'),
+                    ->label('Active')
+                    ->disabled(fn (): bool => ! $canEdit()),
             ])
             ->filters([
                 //

@@ -20,6 +20,11 @@ class SlotEditor extends Page
 
     protected string $view = 'filament.resources.templates.pages.slot-editor';
 
+    public static function canAccess(array $parameters = []): bool
+    {
+        return (bool) auth()->user()?->can('template.update');
+    }
+
     public function mount(int|string $record): void
     {
         $this->record = $this->resolveRecord($record);
