@@ -4,21 +4,26 @@ namespace Database\Seeders;
 
 use App\Models\User;
 use Illuminate\Database\Seeder;
+use Spatie\Permission\Models\Role;
 
 class AdminUserSeeder extends Seeder
 {
     /**
-     * Crea (o actualiza) el usuario administrador inicial.
-     * Las credenciales se leen de variables de entorno para no exponerlas en el repo:
-     *   ADMIN_NAME, ADMIN_EMAIL, ADMIN_PASSWORD
+     * Crea los roles base y el usuario super administrador (JEMO).
+     * Credenciales desde el .env: ADMIN_NAME, ADMIN_EMAIL, ADMIN_PASSWORD
      */
     public function run(): void
     {
+        // Roles base del sistema
+        foreach (['super_admin', 'admin', 'editor', 'viewer'] as $role) {
+            Role::firstOrCreate(['name' => $role, 'guard_name' => 'web']);
+        }
+
         $email = env('ADMIN_EMAIL');
         $password = env('ADMIN_PASSWORD');
 
         if (! $email || ! $password) {
-            $this->command->warn('AdminUserSeeder omitido: define ADMIN_EMAIL y ADMIN_PASSWORD en el .env');
+            $this->command->warn('AdminUserSeeder: define ADMIN_EMAIL y ADMIN_PASSWORD en el .env');
             return;
         }
 
@@ -26,10 +31,12 @@ class AdminUserSeeder extends Seeder
             ['email' => $email],
             [
                 'name' => env('ADMIN_NAME', 'Administrador'),
-                'password' => $password, // el cast 'hashed' del modelo User lo encripta
+                'password' => $password, // el cast 'hashed' del modelo lo encripta
             ],
         );
 
-        $this->command->info("Usuario admin listo: {$user->email}");
+        $user->syncRoles(['super_admin']);
+
+        $this->command->info("Super admin listo: {$user->email}");
     }
 }

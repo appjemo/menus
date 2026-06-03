@@ -2,7 +2,8 @@
 
 namespace App\Filament\Resources\Screens\Schemas;
 
-use Filament\Forms\Components\DateTimePicker;
+use App\Models\Template;
+use Filament\Facades\Filament;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
@@ -13,17 +14,20 @@ class ScreenForm
     {
         return $schema
             ->components([
-                Select::make('company_id')
-                    ->relationship('company', 'name')
-                    ->required(),
-                Select::make('template_id')
-                    ->relationship('template', 'name')
-                    ->default(null),
                 TextInput::make('name')
-                    ->required(),
-                TextInput::make('token')
-                    ->required(),
-                DateTimePicker::make('last_seen_at'),
+                    ->label('Nombre de la pantalla')
+                    ->placeholder('Ej: Pantalla caja 1')
+                    ->required()
+                    ->maxLength(255),
+                Select::make('template_id')
+                    ->label('Plantilla')
+                    // Solo plantillas de la compañía actual (evita fuga entre tenants)
+                    ->options(fn () => Template::query()
+                        ->where('company_id', Filament::getTenant()?->getKey())
+                        ->pluck('name', 'id'))
+                    ->searchable()
+                    ->preload(),
             ]);
+        // token y last_seen_at se gestionan automáticamente (no se editan a mano)
     }
 }

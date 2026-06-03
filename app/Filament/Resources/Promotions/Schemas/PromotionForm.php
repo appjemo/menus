@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources\Promotions\Schemas;
 
+use App\Models\Product;
+use Filament\Facades\Filament;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -14,21 +16,28 @@ class PromotionForm
     {
         return $schema
             ->components([
-                Select::make('company_id')
-                    ->relationship('company', 'name')
-                    ->required(),
-                Select::make('product_id')
-                    ->relationship('product', 'name')
-                    ->default(null),
                 TextInput::make('title')
-                    ->required(),
+                    ->label('Título de la promoción')
+                    ->required()
+                    ->maxLength(255),
+                Select::make('product_id')
+                    ->label('Producto')
+                    ->options(fn () => Product::query()
+                        ->where('company_id', Filament::getTenant()?->getKey())
+                        ->pluck('name', 'id'))
+                    ->searchable()
+                    ->preload(),
                 TextInput::make('promo_price')
+                    ->label('Precio promocional')
                     ->numeric()
-                    ->default(null)
                     ->prefix('$'),
-                DateTimePicker::make('starts_at'),
-                DateTimePicker::make('ends_at'),
+                DateTimePicker::make('starts_at')
+                    ->label('Inicia'),
+                DateTimePicker::make('ends_at')
+                    ->label('Termina'),
                 Toggle::make('is_active')
+                    ->label('Activa')
+                    ->default(true)
                     ->required(),
             ]);
     }

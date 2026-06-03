@@ -2,7 +2,6 @@
 
 namespace App\Filament\Resources\Products\Schemas;
 
-use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Schema;
@@ -13,24 +12,28 @@ class ProductForm
     {
         return $schema
             ->components([
-                Select::make('company_id')
-                    ->relationship('company', 'name')
-                    ->required(),
                 TextInput::make('name')
-                    ->required(),
+                    ->label('Producto')
+                    ->required()
+                    ->maxLength(255),
                 TextInput::make('price')
+                    ->label('Precio')
                     ->required()
                     ->numeric()
                     ->default(0.0)
                     ->prefix('$'),
                 TextInput::make('category')
-                    ->default(null),
-                Toggle::make('is_active')
-                    ->required(),
+                    ->label('Categoría')
+                    ->maxLength(255),
                 TextInput::make('sort_order')
+                    ->label('Orden')
                     ->required()
                     ->numeric()
                     ->default(0),
+                Toggle::make('is_active')
+                    ->label('Activo')
+                    ->default(true)
+                    ->required(),
             ]);
     }
 }
