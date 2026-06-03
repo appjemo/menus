@@ -3,7 +3,7 @@
 namespace App\Filament\Resources\Templates\Pages;
 
 use App\Filament\Resources\Templates\TemplateResource;
-use App\Models\Template;
+use Filament\Resources\Pages\Concerns\InteractsWithRecord;
 use Filament\Resources\Pages\Page;
 use Illuminate\Support\Str;
 
@@ -12,17 +12,18 @@ use Illuminate\Support\Str;
  */
 class SlotEditor extends Page
 {
+    use InteractsWithRecord;
+
     protected static string $resource = TemplateResource::class;
 
     protected string $view = 'filament.resources.templates.pages.slot-editor';
-
-    public Template $record;
 
     public ?int $newProductId = null;
 
     public function mount(int|string $record): void
     {
-        $this->record = Template::with(['slots.product', 'company'])->findOrFail($record);
+        $this->record = $this->resolveRecord($record);
+        $this->record->load(['slots.product', 'company']);
     }
 
     public function getTitle(): string
