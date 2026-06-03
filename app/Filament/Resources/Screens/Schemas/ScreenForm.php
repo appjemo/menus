@@ -15,19 +15,19 @@ class ScreenForm
         return $schema
             ->components([
                 TextInput::make('name')
-                    ->label('Nombre de la pantalla')
-                    ->placeholder('Ej: Pantalla caja 1')
+                    ->label('Screen name')
+                    ->placeholder('e.g. Register screen 1')
                     ->required()
                     ->maxLength(255),
                 Select::make('template_id')
-                    ->label('Plantilla')
-                    // Solo plantillas de la compañía actual (evita fuga entre tenants)
+                    ->label('Template')
+                    // Only templates from the current company (prevents cross-tenant leak)
                     ->options(fn () => Template::query()
                         ->where('company_id', Filament::getTenant()?->getKey())
                         ->pluck('name', 'id'))
                     ->searchable()
                     ->preload(),
             ]);
-        // token y last_seen_at se gestionan automáticamente (no se editan a mano)
+        // token and last_seen_at are managed automatically (not edited by hand)
     }
 }

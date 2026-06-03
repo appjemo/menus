@@ -16,31 +16,28 @@ class ScreensTable
         return $table
             ->columns([
                 TextColumn::make('name')
-                    ->label('Pantalla')
+                    ->label('Screen')
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('template.name')
-                    ->label('Plantilla')
+                    ->label('Template')
                     ->searchable(),
                 TextColumn::make('token')
                     ->label('Token')
                     ->badge()
                     ->copyable()
-                    ->copyMessage('Token copiado')
+                    ->copyMessage('Token copied')
                     ->searchable(),
                 TextColumn::make('last_seen_at')
-                    ->label('Última vez vista')
+                    ->label('Last seen')
                     ->dateTime()
                     ->since()
-                    ->placeholder('Nunca')
+                    ->placeholder('Never')
                     ->sortable(),
             ])
-            ->filters([
-                //
-            ])
             ->recordActions([
-                Action::make('ver')
-                    ->label('Ver')
+                Action::make('view')
+                    ->label('View')
                     ->icon('heroicon-o-play')
                     ->color('primary')
                     ->url(fn ($record) => url("/play/{$record->token}"))

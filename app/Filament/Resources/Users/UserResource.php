@@ -23,11 +23,11 @@ class UserResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedUsers;
 
-    protected static ?string $navigationLabel = 'Usuarios';
+    protected static ?string $navigationLabel = 'Users';
 
-    protected static ?string $modelLabel = 'usuario';
+    protected static ?string $modelLabel = 'user';
 
-    protected static ?string $pluralModelLabel = 'usuarios';
+    protected static ?string $pluralModelLabel = 'users';
 
     // El scope por compañía (muchos-a-muchos) lo manejamos manualmente
     protected static bool $isScopedToTenant = false;

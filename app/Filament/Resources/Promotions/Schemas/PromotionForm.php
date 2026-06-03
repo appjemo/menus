@@ -17,26 +17,26 @@ class PromotionForm
         return $schema
             ->components([
                 TextInput::make('title')
-                    ->label('Título de la promoción')
+                    ->label('Promotion title')
                     ->required()
                     ->maxLength(255),
                 Select::make('product_id')
-                    ->label('Producto')
+                    ->label('Product')
                     ->options(fn () => Product::query()
                         ->where('company_id', Filament::getTenant()?->getKey())
                         ->pluck('name', 'id'))
                     ->searchable()
                     ->preload(),
                 TextInput::make('promo_price')
-                    ->label('Precio promocional')
+                    ->label('Promo price')
                     ->numeric()
                     ->prefix('$'),
                 DateTimePicker::make('starts_at')
-                    ->label('Inicia'),
+                    ->label('Starts at'),
                 DateTimePicker::make('ends_at')
-                    ->label('Termina'),
+                    ->label('Ends at'),
                 Toggle::make('is_active')
-                    ->label('Activa')
+                    ->label('Active')
                     ->default(true)
                     ->required(),
             ]);

@@ -13,25 +13,25 @@ class ProductForm
         return $schema
             ->components([
                 TextInput::make('name')
-                    ->label('Producto')
+                    ->label('Product')
                     ->required()
                     ->maxLength(255),
                 TextInput::make('price')
-                    ->label('Precio')
+                    ->label('Price')
                     ->required()
                     ->numeric()
                     ->default(0.0)
                     ->prefix('$'),
                 TextInput::make('category')
-                    ->label('Categoría')
+                    ->label('Category')
                     ->maxLength(255),
                 TextInput::make('sort_order')
-                    ->label('Orden')
+                    ->label('Order')
                     ->required()
                     ->numeric()
                     ->default(0),
                 Toggle::make('is_active')
-                    ->label('Activo')
+                    ->label('Active')
                     ->default(true)
                     ->required(),
             ]);

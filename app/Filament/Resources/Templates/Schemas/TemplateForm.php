@@ -13,13 +13,13 @@ class TemplateForm
         return $schema
             ->components([
                 TextInput::make('name')
-                    ->label('Nombre de la plantilla')
-                    ->placeholder('Ej: Menú Almuerzo')
+                    ->label('Template name')
+                    ->placeholder('e.g. Lunch Menu')
                     ->required()
                     ->maxLength(255),
                 FileUpload::make('video_path')
-                    ->label('Video de fondo (.mp4)')
-                    ->helperText('Sube el .mp4 exportado de After Effects (sin precios). Se guarda en Google Cloud Storage.')
+                    ->label('Background video (.mp4)')
+                    ->helperText('Upload the .mp4 exported from After Effects (without prices). Stored in Google Cloud Storage.')
                     ->disk('gcs')
                     ->directory('videos')
                     ->visibility('public')
@@ -28,17 +28,17 @@ class TemplateForm
                     ->downloadable()
                     ->columnSpanFull(),
                 TextInput::make('video_width')
-                    ->label('Ancho del video (px)')
+                    ->label('Video width (px)')
                     ->required()
                     ->numeric()
                     ->default(1920),
                 TextInput::make('video_height')
-                    ->label('Alto del video (px)')
+                    ->label('Video height (px)')
                     ->required()
                     ->numeric()
                     ->default(1080),
                 TextInput::make('duration_seconds')
-                    ->label('Duración (segundos)')
+                    ->label('Duration (seconds)')
                     ->numeric(),
             ]);
     }

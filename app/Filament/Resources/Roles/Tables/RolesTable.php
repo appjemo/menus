@@ -17,17 +17,17 @@ class RolesTable
         return $table
             ->columns([
                 TextColumn::make('name')
-                    ->label('Rol')
+                    ->label('Role')
                     ->badge()
                     ->color(fn (string $state): string => $state === 'super_admin' ? 'danger' : 'gray')
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('permissions_count')
-                    ->label('Permisos')
+                    ->label('Permissions')
                     ->counts('permissions')
                     ->badge(),
                 TextColumn::make('users_count')
-                    ->label('Usuarios')
+                    ->label('Users')
                     ->counts('users')
                     ->badge(),
             ])

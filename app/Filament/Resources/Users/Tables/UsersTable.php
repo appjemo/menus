@@ -15,18 +15,15 @@ class UsersTable
         return $table
             ->columns([
                 TextColumn::make('name')
-                    ->label('Nombre')
+                    ->label('Name')
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('email')
-                    ->label('Correo')
+                    ->label('Email')
                     ->searchable(),
                 TextColumn::make('roles.name')
                     ->label('Roles')
                     ->badge(),
-            ])
-            ->filters([
-                //
             ])
             ->recordActions([
                 EditAction::make(),

@@ -30,13 +30,13 @@ class SlotEditor extends Page
     {
         return [
             Action::make('addSlot')
-                ->label('Agregar precio')
+                ->label('Add price')
                 ->icon('heroicon-o-plus')
-                ->modalHeading('Agregar precio al video')
-                ->modalSubmitActionLabel('Agregar')
+                ->modalHeading('Add a price to the video')
+                ->modalSubmitActionLabel('Add')
                 ->schema([
                     Select::make('product_id')
-                        ->label('Producto')
+                        ->label('Product')
                         ->options(fn () => $this->record->company
                             ? $this->record->company->products()->orderBy('sort_order')->pluck('name', 'id')
                             : [])
@@ -50,7 +50,7 @@ class SlotEditor extends Page
 
     public function getTitle(): string
     {
-        return "Editor visual — {$this->record->name}";
+        return "Visual editor — {$this->record->name}";
     }
 
     /** Productos de la compañía dueña de la plantilla. */

@@ -23,7 +23,7 @@ class RoleResource extends Resource
 
     protected static ?string $navigationLabel = 'Roles';
 
-    protected static ?string $modelLabel = 'rol';
+    protected static ?string $modelLabel = 'role';
 
     protected static ?string $pluralModelLabel = 'roles';
 

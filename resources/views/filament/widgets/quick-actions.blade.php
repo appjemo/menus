@@ -6,19 +6,19 @@
 
 <x-filament-widgets::widget>
     <x-filament::section>
-        <x-slot name="heading">Accesos rápidos</x-slot>
+        <x-slot name="heading">Quick actions</x-slot>
 
         <div class="flex flex-wrap gap-3">
             <x-filament::button tag="a" :href="ProductResource::getUrl('index')" icon="heroicon-o-currency-dollar" color="primary">
-                Editar precios
+                Edit prices
             </x-filament::button>
 
             <x-filament::button tag="a" :href="TemplateResource::getUrl('index')" icon="heroicon-o-cursor-arrow-rays" color="gray">
-                Plantillas / Editor visual
+                Templates / Visual editor
             </x-filament::button>
 
             <x-filament::button tag="a" :href="ScreenResource::getUrl('index')" icon="heroicon-o-tv" color="gray">
-                Pantallas
+                Screens
             </x-filament::button>
         </div>
     </x-filament::section>

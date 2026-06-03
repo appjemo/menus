@@ -16,21 +16,21 @@ class RoleForm
                 Hidden::make('guard_name')->default('web'),
 
                 TextInput::make('name')
-                    ->label('Nombre del rol')
+                    ->label('Role name')
                     ->required()
                     ->unique(ignoreRecord: true)
                     ->maxLength(255)
-                    // El rol super_admin no se puede renombrar (es exclusivo de JEMO)
+                    // The super_admin role cannot be renamed (exclusive to JEMO)
                     ->disabled(fn ($record): bool => $record?->name === 'super_admin')
                     ->dehydrated(fn ($record): bool => $record?->name !== 'super_admin'),
 
                 Select::make('permissions')
-                    ->label('Permisos')
+                    ->label('Permissions')
                     ->relationship('permissions', 'name')
                     ->multiple()
                     ->preload()
                     ->searchable()
-                    ->helperText('Asigna permisos a este rol. La aplicación fina de permisos por recurso se irá habilitando.'),
+                    ->helperText('Assign permissions to this role. Fine-grained per-resource enforcement will be enabled progressively.'),
             ]);
     }
 }

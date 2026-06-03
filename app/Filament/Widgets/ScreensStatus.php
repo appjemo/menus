@@ -18,7 +18,7 @@ class ScreensStatus extends BaseWidget
 
     protected int|string|array $columnSpan = 'full';
 
-    protected static ?string $heading = 'Estado de pantallas';
+    protected static ?string $heading = 'Screen status';
 
     public function table(Table $table): Table
     {
@@ -34,35 +34,35 @@ class ScreensStatus extends BaseWidget
             )
             ->columns([
                 TextColumn::make('name')
-                    ->label('Pantalla')
+                    ->label('Screen')
                     ->weight('bold')
                     ->searchable(),
                 TextColumn::make('company.name')
-                    ->label('Compañía')
+                    ->label('Company')
                     ->visible(fn () => Filament::getTenant() === null)
                     ->toggleable(),
                 TextColumn::make('template.name')
-                    ->label('Plantilla')
-                    ->placeholder('Sin plantilla'),
+                    ->label('Template')
+                    ->placeholder('No template'),
                 IconColumn::make('online')
-                    ->label('Estado')
+                    ->label('Status')
                     ->boolean()
                     ->state(fn (Screen $record): bool => $record->last_seen_at !== null
                         && $record->last_seen_at->gt(Carbon::now()->subMinutes(2))),
                 TextColumn::make('last_seen_at')
-                    ->label('Última vez vista')
+                    ->label('Last seen')
                     ->since()
-                    ->placeholder('Nunca'),
+                    ->placeholder('Never'),
             ])
             ->recordActions([
-                Action::make('ver')
-                    ->label('Ver')
+                Action::make('view')
+                    ->label('View')
                     ->icon('heroicon-o-play')
                     ->url(fn (Screen $record): string => url("/play/{$record->token}"))
                     ->openUrlInNewTab(),
             ])
-            ->emptyStateHeading('Aún no hay pantallas')
-            ->emptyStateDescription('Crea una pantalla y asígnale una plantilla para empezar.')
+            ->emptyStateHeading('No screens yet')
+            ->emptyStateDescription('Create a screen and assign it a template to get started.')
             ->paginated([10, 25]);
     }
 }

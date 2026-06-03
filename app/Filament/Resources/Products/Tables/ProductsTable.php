@@ -19,21 +19,21 @@ class ProductsTable
             ->reorderable('sort_order')
             ->columns([
                 TextColumn::make('name')
-                    ->label('Producto')
+                    ->label('Product')
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('category')
-                    ->label('Categoría')
+                    ->label('Category')
                     ->badge()
                     ->searchable(),
-                // Precio editable en línea: editar + Enter guarda al instante
+                // Inline-editable price: edit + Enter saves instantly
                 TextInputColumn::make('price')
-                    ->label('Precio')
+                    ->label('Price')
                     ->type('number')
                     ->rules(['numeric', 'min:0'])
                     ->sortable(),
                 ToggleColumn::make('is_active')
-                    ->label('Activo'),
+                    ->label('Active'),
             ])
             ->filters([
                 //

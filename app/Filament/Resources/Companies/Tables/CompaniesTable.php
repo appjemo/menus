@@ -16,25 +16,22 @@ class CompaniesTable
         return $table
             ->columns([
                 TextColumn::make('name')
-                    ->label('Restaurante')
+                    ->label('Restaurant')
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('slug')
-                    ->label('Identificador')
+                    ->label('Identifier')
                     ->searchable(),
                 TextColumn::make('users_count')
-                    ->label('Usuarios')
+                    ->label('Users')
                     ->counts('users')
                     ->badge(),
                 TextColumn::make('products_count')
-                    ->label('Productos')
+                    ->label('Products')
                     ->counts('products')
                     ->badge(),
                 ToggleColumn::make('is_active')
-                    ->label('Activa'),
-            ])
-            ->filters([
-                //
+                    ->label('Active'),
             ])
             ->recordActions([
                 EditAction::make(),

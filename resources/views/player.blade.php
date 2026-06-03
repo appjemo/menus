@@ -49,12 +49,12 @@
                 <source src="{{ $menu['template']['video_url'] }}" type="video/mp4">
             </video>
         @else
-            <div class="bg-fallback">Sin video asignado</div>
+            <div class="bg-fallback">No video assigned</div>
         @endif
         <div id="overlay"></div>
     </div>
 
-    <div id="status" title="conexión"></div>
+    <div id="status" title="connection"></div>
 
     <script src="https://js.pusher.com/8.4/pusher.min.js"></script>
     <script>

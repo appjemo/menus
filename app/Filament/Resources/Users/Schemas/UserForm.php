@@ -14,30 +14,30 @@ class UserForm
         return $schema
             ->components([
                 TextInput::make('name')
-                    ->label('Nombre')
+                    ->label('Name')
                     ->required()
                     ->maxLength(255),
                 TextInput::make('email')
-                    ->label('Correo')
+                    ->label('Email')
                     ->email()
                     ->required()
                     ->unique(ignoreRecord: true)
                     ->maxLength(255),
                 TextInput::make('password')
-                    ->label('Contraseña')
+                    ->label('Password')
                     ->password()
                     ->revealable()
-                    // Requerida al crear; al editar, en blanco = no cambiar
+                    // Required on create; on edit, leave blank to keep current
                     ->required(fn (string $operation): bool => $operation === 'create')
                     ->dehydrated(fn ($state): bool => filled($state))
-                    ->helperText('Al editar, deja en blanco para conservar la actual.')
+                    ->helperText('When editing, leave blank to keep the current password.')
                     ->maxLength(255),
                 Select::make('roles')
                     ->label('Roles')
                     ->relationship(
                         name: 'roles',
                         titleAttribute: 'name',
-                        // El rol super_admin es exclusivo de JEMO: nunca asignable desde aquí
+                        // The super_admin role is exclusive to JEMO: never assignable here
                         modifyQueryUsing: fn (Builder $query) => $query->where('name', '!=', 'super_admin'),
                     )
                     ->multiple()

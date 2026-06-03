@@ -12,7 +12,7 @@
         {{-- Instrucciones --}}
         <div class="flex items-center gap-2 rounded-xl bg-white p-4 text-sm text-gray-600 shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:text-gray-300 dark:ring-white/10">
             <x-filament::icon icon="heroicon-o-cursor-arrow-rays" class="h-5 w-5 text-primary-500" />
-            Usa <strong class="font-semibold">“Agregar precio”</strong> (arriba a la derecha) para colocar un producto. Luego <strong class="font-semibold">arrastra</strong> cada precio sobre el video; al pasar el cursor por encima puedes cambiar tamaño, color y tipografía. Todo se guarda solo.
+            Use <strong class="font-semibold">“Add price”</strong> (top right) to place a product. Then <strong class="font-semibold">drag</strong> each price onto the video; hover over it to change size, color and font. Everything saves automatically.
         </div>
 
         {{-- Escenario: video + slots arrastrables --}}
@@ -45,7 +45,7 @@
                             <source src="{{ $videoUrl }}" type="video/mp4">
                         </video>
                     @else
-                        <div class="pointer-events-none absolute inset-0 flex items-center justify-center text-gray-500">Sin video — sube uno en la plantilla</div>
+                        <div class="pointer-events-none absolute inset-0 flex items-center justify-center text-gray-500">No video — upload one in the template</div>
                     @endif
 
                     @foreach ($record->slots as $slot)
@@ -66,7 +66,7 @@
                             <div class="whitespace-nowrap font-extrabold leading-tight"
                                  style="font-size: {{ max(8, $slot->font_size * $scale) }}px; color: {{ $slot->font_color }}; font-family: {{ $slot->font_family ?: 'inherit' }}; text-shadow: 0 2px 6px rgba(0,0,0,.7);">
                                 @if ($slot->show_name)
-                                    <div style="font-weight:600;">{{ $slot->product?->name ?? $slot->label ?? 'Texto' }}</div>
+                                    <div style="font-weight:600;">{{ $slot->product?->name ?? $slot->label ?? 'Text' }}</div>
                                 @endif
                                 <div>${{ $slot->product ? number_format((float) $slot->product->price, 2) : '--' }}</div>
                             </div>
@@ -82,13 +82,13 @@
                                     class="rounded bg-gray-700 px-2 py-0.5 text-xs font-semibold text-white hover:bg-gray-600">A+</button>
                                 <input type="color" value="{{ $slot->font_color }}"
                                     x-on:change="$wire.setColor({{ $slot->id }}, $event.target.value)"
-                                    title="Color del texto"
+                                    title="Text color"
                                     class="h-6 w-6 cursor-pointer rounded border-0 bg-transparent p-0">
                                 <select
                                     x-on:change="$wire.setFontFamily({{ $slot->id }}, $event.target.value)"
-                                    title="Tipografía"
+                                    title="Font"
                                     class="h-6 rounded border-0 bg-gray-700 py-0 pl-1 pr-5 text-xs text-white">
-                                    <option value="">Fuente…</option>
+                                    <option value="">Font…</option>
                                     @foreach (\App\Filament\Resources\Templates\Pages\SlotEditor::FONTS as $css => $label)
                                         <option value="{{ $css }}" @selected($slot->font_family === $css)>{{ $label }}</option>
                                     @endforeach
@@ -104,7 +104,7 @@
         </div>
 
         <p class="text-sm text-gray-500">
-            Resolución base del video: {{ $videoW }}×{{ $videoH }} px. Las posiciones se guardan en esas coordenadas y se escalan en cada pantalla.
+            Base video resolution: {{ $videoW }}×{{ $videoH }} px. Positions are saved in those coordinates and scaled on each screen.
         </p>
     </div>
 </x-filament-panels::page>

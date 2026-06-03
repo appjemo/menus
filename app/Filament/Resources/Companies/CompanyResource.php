@@ -21,11 +21,11 @@ class CompanyResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedBuildingOffice2;
 
-    protected static ?string $navigationLabel = 'Compañías';
+    protected static ?string $navigationLabel = 'Companies';
 
-    protected static ?string $modelLabel = 'compañía';
+    protected static ?string $modelLabel = 'company';
 
-    protected static ?string $pluralModelLabel = 'compañías';
+    protected static ?string $pluralModelLabel = 'companies';
 
     // Las compañías son globales (no pertenecen a un tenant)
     protected static bool $isScopedToTenant = false;

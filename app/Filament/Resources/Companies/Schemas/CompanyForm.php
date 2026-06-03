@@ -15,10 +15,10 @@ class CompanyForm
     {
         return $schema
             ->components([
-                Section::make('Datos del restaurante')
+                Section::make('Restaurant details')
                     ->schema([
                         TextInput::make('name')
-                            ->label('Nombre del restaurante')
+                            ->label('Restaurant name')
                             ->required()
                             ->maxLength(255)
                             ->live(onBlur: true)
@@ -28,35 +28,35 @@ class CompanyForm
                                 }
                             }),
                         TextInput::make('slug')
-                            ->label('Identificador (URL)')
-                            ->helperText('Se usa en la URL del panel. Solo minúsculas, números y guiones.')
+                            ->label('Identifier (URL)')
+                            ->helperText('Used in the panel URL. Lowercase letters, numbers and dashes only.')
                             ->required()
                             ->unique(ignoreRecord: true)
                             ->maxLength(255),
                         Toggle::make('is_active')
-                            ->label('Activa')
+                            ->label('Active')
                             ->default(true)
                             ->required(),
                     ]),
 
-                // Al crear: se genera el usuario administrador de la compañía
-                Section::make('Usuario administrador inicial')
-                    ->description('Se crea junto con la compañía y se le asigna el rol "admin".')
+                // On create: the company's admin user is created
+                Section::make('Initial admin user')
+                    ->description('Created together with the company and assigned the "admin" role.')
                     ->visibleOn('create')
                     ->schema([
                         TextInput::make('admin_name')
-                            ->label('Nombre')
+                            ->label('Name')
                             ->required()
                             ->maxLength(255)
                             ->dehydrated(false),
                         TextInput::make('admin_email')
-                            ->label('Correo')
+                            ->label('Email')
                             ->email()
                             ->required()
                             ->unique('users', 'email')
                             ->dehydrated(false),
                         TextInput::make('admin_password')
-                            ->label('Contraseña')
+                            ->label('Password')
                             ->password()
                             ->revealable()
                             ->required()
@@ -64,15 +64,15 @@ class CompanyForm
                             ->dehydrated(false),
                     ]),
 
-                // Al editar: gestionar usuarios de la compañía
+                // On edit: manage the company's users
                 Select::make('users')
-                    ->label('Usuarios de esta compañía')
+                    ->label('Company users')
                     ->relationship('users', 'name')
                     ->multiple()
                     ->preload()
                     ->searchable()
                     ->visibleOn('edit')
-                    ->helperText('Usuarios que pueden administrar este restaurante.'),
+                    ->helperText('Users who can administer this restaurant.'),
             ]);
     }
 }

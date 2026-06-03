@@ -18,7 +18,7 @@ class TemplatesTable
         return $table
             ->columns([
                 TextColumn::make('name')
-                    ->label('Plantilla')
+                    ->label('Template')
                     ->searchable()
                     ->sortable(),
                 IconColumn::make('video_path')
@@ -26,16 +26,16 @@ class TemplatesTable
                     ->boolean()
                     ->state(fn ($record) => filled($record->video_path)),
                 TextColumn::make('slots_count')
-                    ->label('Precios')
+                    ->label('Prices')
                     ->counts('slots')
                     ->badge(),
                 TextColumn::make('video_width')
-                    ->label('Resolución')
+                    ->label('Resolution')
                     ->formatStateUsing(fn ($record) => "{$record->video_width}×{$record->video_height}"),
             ])
             ->recordActions([
                 Action::make('slots')
-                    ->label('Editor visual')
+                    ->label('Visual editor')
                     ->icon('heroicon-o-cursor-arrow-rays')
                     ->color('primary')
                     ->url(fn ($record) => TemplateResource::getUrl('slots', ['record' => $record])),

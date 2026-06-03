@@ -24,32 +24,32 @@ class StatsOverview extends StatsOverviewWidget
             $totalScreens = $tenant->screens()->count();
             $onlineScreens = $online($tenant->screens())->count();
 
-            $stats[] = Stat::make('Productos', $tenant->products()->count())
+            $stats[] = Stat::make('Products', $tenant->products()->count())
                 ->descriptionIcon('heroicon-m-shopping-bag')
                 ->color('primary');
 
-            $stats[] = Stat::make('Pantallas', $totalScreens)
-                ->description("{$onlineScreens} en línea")
+            $stats[] = Stat::make('Screens', $totalScreens)
+                ->description("{$onlineScreens} online")
                 ->descriptionIcon($onlineScreens > 0 ? 'heroicon-m-signal' : 'heroicon-m-signal-slash')
                 ->color($onlineScreens > 0 ? 'success' : 'gray');
 
-            $stats[] = Stat::make('Plantillas', $tenant->templates()->count())
+            $stats[] = Stat::make('Templates', $tenant->templates()->count())
                 ->descriptionIcon('heroicon-m-film')
                 ->color('primary');
 
-            $stats[] = Stat::make('Promociones activas', $tenant->promotions()->where('is_active', true)->count())
+            $stats[] = Stat::make('Active promotions', $tenant->promotions()->where('is_active', true)->count())
                 ->descriptionIcon('heroicon-m-megaphone')
                 ->color('warning');
         }
 
-        // Vista global solo para super admin (JEMO)
+        // Global view only for super admin (JEMO)
         if (Auth::user()?->isSuperAdmin()) {
-            $stats[] = Stat::make('Compañías (global)', Company::count())
+            $stats[] = Stat::make('Companies (global)', Company::count())
                 ->descriptionIcon('heroicon-m-building-office-2')
                 ->color('info');
 
-            $stats[] = Stat::make('Pantallas totales (global)', Screen::count())
-                ->description($online(Screen::query())->count().' en línea ahora')
+            $stats[] = Stat::make('Total screens (global)', Screen::count())
+                ->description($online(Screen::query())->count().' online now')
                 ->descriptionIcon('heroicon-m-tv')
                 ->color('info');
         }
