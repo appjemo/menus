@@ -11,7 +11,15 @@ class Product extends Model
 {
     protected static function booted(): void
     {
-        $broadcast = fn (Product $product) => MenuUpdated::dispatch($product->company_id);
+        $broadcast = function (Product $product) {
+            // Un fallo de Reverb no debe romper el guardado; las pantallas
+            // igual refrescan por el fallback de polling.
+            try {
+                MenuUpdated::dispatch($product->company_id);
+            } catch (\Throwable $e) {
+                report($e);
+            }
+        };
 
         static::saved($broadcast);
         static::deleted($broadcast);

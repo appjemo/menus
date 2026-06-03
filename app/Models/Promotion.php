@@ -10,7 +10,13 @@ class Promotion extends Model
 {
     protected static function booted(): void
     {
-        $broadcast = fn (Promotion $promotion) => MenuUpdated::dispatch($promotion->company_id);
+        $broadcast = function (Promotion $promotion) {
+            try {
+                MenuUpdated::dispatch($promotion->company_id);
+            } catch (\Throwable $e) {
+                report($e);
+            }
+        };
 
         static::saved($broadcast);
         static::deleted($broadcast);
