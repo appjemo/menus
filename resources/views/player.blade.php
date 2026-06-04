@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <meta name="theme-color" content="#000000">
     <link rel="manifest" href="/manifest.webmanifest">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="{{ \App\Filament\Resources\Templates\Pages\SlotEditor::GOOGLE_FONTS_HREF }}" rel="stylesheet">
     <title>{{ $screen->name }} — JEMO Menus</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }

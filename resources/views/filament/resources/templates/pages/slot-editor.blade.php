@@ -8,6 +8,8 @@
 @endphp
 
 <x-filament-panels::page>
+    <link href="{{ \App\Filament\Resources\Templates\Pages\SlotEditor::GOOGLE_FONTS_HREF }}" rel="stylesheet">
+
     <div class="space-y-4">
         {{-- Instrucciones --}}
         <div class="flex items-center gap-2 rounded-xl bg-white p-4 text-sm text-gray-600 shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:text-gray-300 dark:ring-white/10">
@@ -18,21 +20,27 @@
         {{-- Escenario: video + slots arrastrables --}}
         <div class="overflow-auto rounded-xl bg-gray-950 p-4">
             <div
-                x-data="{ scale: {{ $scale }}, el: null, id: null, sx: 0, sy: 0 }"
+                x-data="{ scale: {{ $scale }}, dragId: null, sx: 0, sy: 0 }"
                 x-on:mousemove.window="
-                    if (el) {
-                        const s = $refs.stage.getBoundingClientRect();
-                        el.style.left = Math.max(0, Math.min($event.clientX - s.left - sx, s.width)) + 'px';
-                        el.style.top = Math.max(0, Math.min($event.clientY - s.top - sy, s.height)) + 'px';
+                    if (dragId !== null) {
+                        const el = $refs.stage.querySelector('[data-slot-id=' + dragId + ']');
+                        if (el) {
+                            const s = $refs.stage.getBoundingClientRect();
+                            el.style.left = Math.max(0, Math.min($event.clientX - s.left - sx, s.width)) + 'px';
+                            el.style.top = Math.max(0, Math.min($event.clientY - s.top - sy, s.height)) + 'px';
+                        }
                     }
                 "
                 x-on:mouseup.window="
-                    if (el) {
-                        const x = Math.round(parseFloat(el.style.left) / scale);
-                        const y = Math.round(parseFloat(el.style.top) / scale);
-                        el.style.cursor = 'grab';
-                        el = null;
-                        $wire.updatePosition(id, x, y);
+                    if (dragId !== null) {
+                        const el = $refs.stage.querySelector('[data-slot-id=' + dragId + ']');
+                        if (el) {
+                            const x = Math.round(parseFloat(el.style.left) / scale);
+                            const y = Math.round(parseFloat(el.style.top) / scale);
+                            el.style.cursor = 'grab';
+                            $wire.updatePosition(dragId, x, y);
+                        }
+                        dragId = null;
                     }
                 "
                 class="relative mx-auto"
@@ -51,9 +59,10 @@
                     @foreach ($record->slots as $slot)
                         <div
                             wire:key="slot-{{ $slot->id }}"
+                            data-slot-id="{{ $slot->id }}"
                             x-on:mousedown="
                                 if ($event.target.closest('[data-controls]')) return;
-                                el = $el; id = {{ $slot->id }};
+                                dragId = {{ $slot->id }};
                                 const r = $el.getBoundingClientRect();
                                 sx = $event.clientX - r.left;
                                 sy = $event.clientY - r.top;

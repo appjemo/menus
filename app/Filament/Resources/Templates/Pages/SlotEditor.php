@@ -164,13 +164,29 @@ class SlotEditor extends Page
 
     /** Tipografías disponibles: clave = valor CSS (con comillas simples), valor = etiqueta. */
     public const FONTS = [
+        // Google Fonts (se cargan en el editor y el Player; cacheadas para offline)
+        "'Anton', sans-serif" => 'Anton',
+        "'Bebas Neue', sans-serif" => 'Bebas Neue',
+        "'Oswald', sans-serif" => 'Oswald',
+        "'Montserrat', sans-serif" => 'Montserrat',
+        "'Poppins', sans-serif" => 'Poppins',
+        "'Roboto', sans-serif" => 'Roboto',
+        "'Roboto Condensed', sans-serif" => 'Roboto Condensed',
+        "'Teko', sans-serif" => 'Teko',
+        "'Archivo Black', sans-serif" => 'Archivo Black',
+        "'Fjalla One', sans-serif" => 'Fjalla One',
+        "'Lobster', cursive" => 'Lobster',
+        "'Pacifico', cursive" => 'Pacifico',
+        "'Bangers', cursive" => 'Bangers',
+        // Tipografías del sistema (siempre disponibles)
         'Arial, sans-serif' => 'Arial',
-        'Helvetica, Arial, sans-serif' => 'Helvetica',
         'Georgia, serif' => 'Georgia',
         "'Times New Roman', serif" => 'Times New Roman',
-        "'Trebuchet MS', sans-serif" => 'Trebuchet MS',
         'Verdana, sans-serif' => 'Verdana',
         'Impact, sans-serif' => 'Impact',
         "'Courier New', monospace" => 'Courier New',
     ];
+
+    /** URL de Google Fonts con todas las familias cargadas (editor + Player). */
+    public const GOOGLE_FONTS_HREF = 'https://fonts.googleapis.com/css2?family=Anton&family=Archivo+Black&family=Bangers&family=Bebas+Neue&family=Fjalla+One&family=Lobster&family=Montserrat:wght@400;600;700;800&family=Oswald:wght@400;500;700&family=Pacifico&family=Poppins:wght@400;600;700;800&family=Roboto:wght@400;700;900&family=Roboto+Condensed:wght@400;700&family=Teko:wght@400;500;700&display=swap';
 }

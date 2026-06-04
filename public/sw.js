@@ -5,7 +5,7 @@
 //  - Página del Player (/play/{token}): network-first con fallback a cache
 //  - pusher-js (CDN): cache-first (para reconectar al volver la red)
 
-const VERSION = 'v1';
+const VERSION = 'v2';
 const PAGE_CACHE = `jemo-pages-${VERSION}`;
 const MENU_CACHE = `jemo-menu-${VERSION}`;
 const VIDEO_CACHE = `jemo-video-${VERSION}`;
@@ -102,8 +102,10 @@ self.addEventListener('fetch', (event) => {
         return;
     }
 
-    // pusher-js desde el CDN → cache-first
-    if (url.hostname === 'js.pusher.com') {
+    // pusher-js (CDN) y Google Fonts → cache-first (para offline)
+    if (url.hostname === 'js.pusher.com'
+        || url.hostname === 'fonts.googleapis.com'
+        || url.hostname === 'fonts.gstatic.com') {
         event.respondWith(cacheFirst(request, STATIC_CACHE));
         return;
     }
