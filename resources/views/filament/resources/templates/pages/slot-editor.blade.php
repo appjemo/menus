@@ -143,8 +143,14 @@
                 const stage = document.getElementById('slot-stage');
                 if (! stage) return;
                 const s = stage.getBoundingClientRect();
-                drag.el.style.left = Math.max(0, Math.min(e.clientX - s.left - drag.offX, s.width)) + 'px';
-                drag.el.style.top = Math.max(0, Math.min(e.clientY - s.top - drag.offY, s.height)) + 'px';
+                const nx = Math.max(0, Math.min(e.clientX - s.left - drag.offX, s.width));
+                const ny = Math.max(0, Math.min(e.clientY - s.top - drag.offY, s.height));
+                drag.el.style.left = nx + 'px';
+                drag.el.style.top = ny + 'px';
+                if (! drag._logged) {
+                    drag._logged = true;
+                    console.log('[JEMO] first move → nx,ny=', nx, ny, '| stage WxH=', s.width, s.height, '| el=', drag.el);
+                }
             });
 
             document.addEventListener('mouseup', () => {
