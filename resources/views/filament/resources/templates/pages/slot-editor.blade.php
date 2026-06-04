@@ -110,13 +110,11 @@
         (function () {
             if (window.__jemoSlotDragInit) return;
             window.__jemoSlotDragInit = true;
-            console.log('[JEMO] slot drag ready');
 
             let drag = null;
 
             document.addEventListener('mousedown', (e) => {
                 const slot = e.target.closest('.slot-draggable');
-                console.log('[JEMO] mousedown — slot match:', !! slot, 'target:', e.target);
                 if (! slot) return;
                 if (e.target.closest('[data-controls]')) return; // los controles no arrastran
                 const stage = document.getElementById('slot-stage');
@@ -130,8 +128,9 @@
                     offY: e.clientY - r.top,
                 };
                 slot.style.cursor = 'grabbing';
+                slot.style.zIndex = '50';
+                slot.style.outline = '2px dashed rgba(255,255,255,.7)';
                 e.preventDefault();
-                console.log('[JEMO] drag START id=', drag.id);
             });
 
             document.addEventListener('mousemove', (e) => {
@@ -139,14 +138,8 @@
                 const stage = document.getElementById('slot-stage');
                 if (! stage) return;
                 const s = stage.getBoundingClientRect();
-                const nx = Math.max(0, Math.min(e.clientX - s.left - drag.offX, s.width));
-                const ny = Math.max(0, Math.min(e.clientY - s.top - drag.offY, s.height));
-                drag.el.style.left = nx + 'px';
-                drag.el.style.top = ny + 'px';
-                if (! drag._logged) {
-                    drag._logged = true;
-                    console.log('[JEMO] first move → nx,ny=', nx, ny, '| stage WxH=', s.width, s.height, '| el=', drag.el);
-                }
+                drag.el.style.left = Math.max(0, Math.min(e.clientX - s.left - drag.offX, s.width)) + 'px';
+                drag.el.style.top = Math.max(0, Math.min(e.clientY - s.top - drag.offY, s.height)) + 'px';
             });
 
             document.addEventListener('mouseup', () => {
@@ -154,11 +147,11 @@
                 const baseX = Math.round(parseFloat(drag.el.style.left) / drag.scale);
                 const baseY = Math.round(parseFloat(drag.el.style.top) / drag.scale);
                 drag.el.style.cursor = 'grab';
+                drag.el.style.outline = '';
                 const id = drag.id;
                 const root = drag.el.closest('[wire\\:id]');
                 drag = null;
                 const wireId = root && root.getAttribute('wire:id');
-                console.log('[JEMO] drop → save id=', id, 'x=', baseX, 'y=', baseY, '| wireId=', wireId);
                 if (wireId && window.Livewire) {
                     window.Livewire.find(wireId).call('updatePosition', id, baseX, baseY);
                 }
