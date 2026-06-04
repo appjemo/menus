@@ -114,6 +114,7 @@
         (function () {
             if (window.__jemoSlotDragInit) return;
             window.__jemoSlotDragInit = true;
+            console.log('[JEMO] slot drag ready');
 
             let drag = null;
 
