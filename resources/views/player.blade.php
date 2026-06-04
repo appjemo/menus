@@ -8,6 +8,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="{{ \App\Filament\Resources\Templates\Pages\SlotEditor::GOOGLE_FONTS_HREF }}" rel="stylesheet">
+    @include('partials.slot-effects')
     <title>{{ $screen->name }} — JEMO Menus</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -68,6 +69,9 @@
         const TOKEN = @json($screen->token);
         const REVERB_KEY = @json($reverbKey);
         let menu = @json($menu);
+        // Firma del contenido (sin generated_at) para no re-renderizar si nada cambió
+        const sigOf = (m) => JSON.stringify({ t: m.template, s: m.slots });
+        let lastSig = sigOf(menu);
 
         const stage = document.getElementById('stage');
         const overlay = document.getElementById('overlay');
@@ -89,6 +93,9 @@
             (menu.slots || []).forEach(slot => {
                 const el = document.createElement('div');
                 el.className = 'slot';
+                if (slot.effect && slot.effect !== 'none') {
+                    el.classList.add(slot.effect);
+                }
                 el.style.left = slot.pos_x + 'px';
                 el.style.top = slot.pos_y + 'px';
                 el.style.fontSize = slot.font_size + 'px';
@@ -138,10 +145,14 @@
             try {
                 const res = await fetch(`/play/${TOKEN}/menu`, { cache: 'no-store' });
                 if (!res.ok) throw new Error('HTTP ' + res.status);
-                menu = await res.json();
+                const data = await res.json();
+                statusDot.classList.remove('offline');
+                const sig = sigOf(data);
+                if (sig === lastSig) return; // nada cambió → no re-render (no repetir animaciones)
+                lastSig = sig;
+                menu = data;
                 renderOverlay();
                 fitStage();
-                statusDot.classList.remove('offline');
             } catch (e) {
                 // Sin conexión: conservamos el último menú mostrado (resiliencia básica)
                 statusDot.classList.add('offline');

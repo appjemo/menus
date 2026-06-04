@@ -159,6 +159,19 @@ class SlotEditor extends Page
         $this->record->load('slots.product');
     }
 
+    public function setEffect(int $slotId, ?string $effect): void
+    {
+        $allowed = array_keys(self::EFFECTS);
+
+        $slot = $this->record->slots()->find($slotId);
+
+        if ($slot) {
+            $slot->update(['effect' => in_array($effect, $allowed, true) ? $effect : 'none']);
+        }
+
+        $this->record->load('slots.product');
+    }
+
     public function setColor(int $slotId, string $color): void
     {
         // Solo aceptar hex tipo #RRGGBB
@@ -213,6 +226,23 @@ class SlotEditor extends Page
         'Verdana, sans-serif' => 'Verdana',
         'Impact, sans-serif' => 'Impact',
         "'Courier New', monospace" => 'Courier New',
+    ];
+
+    /** Efectos de animación disponibles: clave = clase CSS, valor = etiqueta. */
+    public const EFFECTS = [
+        'none' => 'No effect',
+        'fx-pulse' => 'Pulse (loop)',
+        'fx-glow' => 'Glow (loop)',
+        'fx-blink' => 'Blink (loop)',
+        'fx-bounce' => 'Bounce (loop)',
+        'fx-float' => 'Float (loop)',
+        'fx-shake' => 'Shake (loop)',
+        'fx-tada' => 'Tada (loop)',
+        'fx-swing' => 'Swing (loop)',
+        'fx-fade-in' => 'Fade in (entry)',
+        'fx-slide-up' => 'Slide up (entry)',
+        'fx-slide-left' => 'Slide left (entry)',
+        'fx-zoom-in' => 'Zoom in (entry)',
     ];
 
     /** URL de Google Fonts con todas las familias cargadas (editor + Player). */

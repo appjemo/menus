@@ -9,6 +9,7 @@
 
 <x-filament-panels::page>
     <link href="{{ \App\Filament\Resources\Templates\Pages\SlotEditor::GOOGLE_FONTS_HREF }}" rel="stylesheet">
+    @include('partials.slot-effects')
 
     <div class="space-y-4">
         {{-- Instrucciones --}}
@@ -49,7 +50,7 @@
                                         : ' gap:0.5em;';
                                 }
                             @endphp
-                            <div class="font-extrabold leading-tight {{ $inline ? '' : 'whitespace-nowrap' }}"
+                            <div class="font-extrabold leading-tight {{ $inline ? '' : 'whitespace-nowrap' }} {{ ($slot->effect && $slot->effect !== 'none') ? $slot->effect : '' }}"
                                  style="{{ $innerStyle }}">
                                 @if ($slot->show_name)
                                     <div style="font-weight:600; white-space:nowrap;">{{ $slot->product?->name ?? $slot->label ?? 'Text' }}</div>
@@ -79,6 +80,14 @@
                                     <option value="" style="background:#374151;color:#fff;">Font…</option>
                                     @foreach (\App\Filament\Resources\Templates\Pages\SlotEditor::FONTS as $css => $label)
                                         <option value="{{ $css }}" @selected($slot->font_family === $css) style="background:#374151;color:#fff;">{{ $label }}</option>
+                                    @endforeach
+                                </select>
+                                <select
+                                    x-on:change="$wire.setEffect({{ $slot->id }}, $event.target.value)"
+                                    title="Animation effect"
+                                    style="{{ $ctrl }} padding:0 0.4rem; max-width:9rem;">
+                                    @foreach (\App\Filament\Resources\Templates\Pages\SlotEditor::EFFECTS as $fx => $label)
+                                        <option value="{{ $fx }}" @selected(($slot->effect ?? 'none') === $fx) style="background:#374151;color:#fff;">{{ $label }}</option>
                                     @endforeach
                                 </select>
                                 <button type="button" style="{{ $btn }}"

@@ -38,6 +38,7 @@ class Slot extends Model
         'show_name',
         'layout',
         'box_width',
+        'effect',
     ];
 
     protected function casts(): array
