@@ -32,9 +32,9 @@ class AdminPanelProvider extends PanelProvider
             ->profile()
             ->tenant(Company::class, slugAttribute: 'slug')
             ->brandName('JEMO Menus')
-            ->brandLogo(asset('images/jemo-logo.svg'))
-            ->brandLogoHeight('2.5rem')
-            ->favicon(asset('images/jemo-logo.svg'))
+            ->brandLogo(asset('images/logo-jemo.png'))
+            ->brandLogoHeight('2.75rem')
+            ->favicon(asset('images/logo-jemo.png'))
             ->colors([
                 'primary' => Color::Amber,
             ])
