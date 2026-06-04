@@ -72,12 +72,22 @@
                             class="group absolute select-none"
                             style="left: {{ $slot->pos_x * $scale }}px; top: {{ $slot->pos_y * $scale }}px; cursor: grab;"
                         >
-                            <div class="whitespace-nowrap font-extrabold leading-tight"
-                                 style="font-size: {{ max(8, $slot->font_size * $scale) }}px; color: {{ $slot->font_color }}; font-family: {{ $slot->font_family ?: 'inherit' }}; text-shadow: 0 2px 6px rgba(0,0,0,.7);">
+                            @php
+                                $inline = ($slot->layout ?? 'stacked') === 'inline';
+                                $innerStyle = 'font-size: '.max(8, $slot->font_size * $scale).'px; color: '.$slot->font_color.'; font-family: '.($slot->font_family ?: 'inherit').'; text-shadow: 0 2px 6px rgba(0,0,0,.7);';
+                                if ($inline) {
+                                    $innerStyle .= ' display:flex; align-items:baseline;';
+                                    $innerStyle .= $slot->box_width
+                                        ? ' width:'.($slot->box_width * $scale).'px; justify-content:space-between;'
+                                        : ' gap:0.5em;';
+                                }
+                            @endphp
+                            <div class="font-extrabold leading-tight {{ $inline ? '' : 'whitespace-nowrap' }}"
+                                 style="{{ $innerStyle }}">
                                 @if ($slot->show_name)
-                                    <div style="font-weight:600;">{{ $slot->product?->name ?? $slot->label ?? 'Text' }}</div>
+                                    <div style="font-weight:600; white-space:nowrap;">{{ $slot->product?->name ?? $slot->label ?? 'Text' }}</div>
                                 @endif
-                                <div>${{ $slot->product ? number_format((float) $slot->product->price, 2) : '--' }}</div>
+                                <div style="white-space:nowrap;">${{ $slot->product ? number_format((float) $slot->product->price, 2) : '--' }}</div>
                             </div>
 
                             {{-- Controles: no inician arrastre (mousedown.stop) --}}
@@ -102,6 +112,16 @@
                                         <option value="{{ $css }}" @selected($slot->font_family === $css)>{{ $label }}</option>
                                     @endforeach
                                 </select>
+                                <button type="button"
+                                    wire:click="toggleLayout({{ $slot->id }})"
+                                    title="{{ $inline ? 'Same line' : 'Stacked' }}"
+                                    class="rounded bg-gray-700 px-2 py-0.5 text-xs font-semibold text-white hover:bg-gray-600">{{ $inline ? '↔' : '↕' }}</button>
+                                @if ($inline)
+                                    <button type="button" wire:click="setWidth({{ $slot->id }}, -40)" title="Narrower"
+                                        class="rounded bg-gray-700 px-2 py-0.5 text-xs font-semibold text-white hover:bg-gray-600">W-</button>
+                                    <button type="button" wire:click="setWidth({{ $slot->id }}, 40)" title="Wider"
+                                        class="rounded bg-gray-700 px-2 py-0.5 text-xs font-semibold text-white hover:bg-gray-600">W+</button>
+                                @endif
                                 <button type="button"
                                     wire:click="removeSlot({{ $slot->id }})"
                                     class="rounded bg-red-600 px-2 py-0.5 text-xs font-semibold text-white hover:bg-red-500">✕</button>

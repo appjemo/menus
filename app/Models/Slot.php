@@ -36,6 +36,8 @@ class Slot extends Model
         'font_family',
         'align',
         'show_name',
+        'layout',
+        'box_width',
     ];
 
     protected function casts(): array

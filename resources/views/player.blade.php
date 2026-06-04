@@ -96,6 +96,18 @@
                 el.style.textAlign = slot.align || 'left';
                 if (slot.font_family) el.style.fontFamily = slot.font_family;
 
+                // Layout: 'inline' = nombre y precio en el mismo renglón
+                if (slot.layout === 'inline') {
+                    el.style.display = 'flex';
+                    el.style.alignItems = 'baseline';
+                    if (slot.box_width) {
+                        el.style.width = slot.box_width + 'px';
+                        el.style.justifyContent = 'space-between';
+                    } else {
+                        el.style.gap = '0.5em';
+                    }
+                }
+
                 if (slot.show_name && slot.name) {
                     const n = document.createElement('div');
                     n.className = 'name';
@@ -103,17 +115,19 @@
                     el.appendChild(n);
                 }
                 if (slot.price !== null && slot.price !== undefined) {
+                    const pw = document.createElement('div');
                     // Precio original tachado si hay promoción vigente
                     if (slot.is_promo && slot.original_price) {
                         const o = document.createElement('span');
                         o.className = 'orig';
                         o.textContent = slot.original_price;
-                        el.appendChild(o);
+                        pw.appendChild(o);
                     }
                     const p = document.createElement('span');
                     p.className = 'price';
                     p.textContent = slot.price;
-                    el.appendChild(p);
+                    pw.appendChild(p);
+                    el.appendChild(pw);
                 }
                 overlay.appendChild(el);
             });

@@ -77,6 +77,8 @@ class PlayerController extends Controller
                     'font_family' => $slot->font_family,
                     'align' => $slot->align,
                     'show_name' => (bool) $slot->show_name,
+                    'layout' => $slot->layout ?? 'stacked',
+                    'box_width' => $slot->box_width,
                     'name' => $product?->name ?? $slot->label,
                     'price' => $price !== null ? number_format((float) $price, 2) : null,
                     'original_price' => $originalPrice !== null ? number_format((float) $originalPrice, 2) : null,

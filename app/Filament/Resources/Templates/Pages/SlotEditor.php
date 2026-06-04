@@ -131,6 +131,34 @@ class SlotEditor extends Page
         $this->record->load('slots.product');
     }
 
+    public function toggleLayout(int $slotId): void
+    {
+        $slot = $this->record->slots()->find($slotId);
+
+        if ($slot) {
+            $new = $slot->layout === 'inline' ? 'stacked' : 'inline';
+            $data = ['layout' => $new];
+            if ($new === 'inline' && ! $slot->box_width) {
+                $data['box_width'] = 500;
+            }
+            $slot->update($data);
+        }
+
+        $this->record->load('slots.product');
+    }
+
+    public function setWidth(int $slotId, int $delta): void
+    {
+        $slot = $this->record->slots()->find($slotId);
+
+        if ($slot) {
+            $width = max(100, min(($slot->box_width ?? 500) + $delta, (int) $this->record->video_width));
+            $slot->update(['box_width' => $width]);
+        }
+
+        $this->record->load('slots.product');
+    }
+
     public function setColor(int $slotId, string $color): void
     {
         // Solo aceptar hex tipo #RRGGBB
