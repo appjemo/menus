@@ -23,7 +23,7 @@
                 x-data="{ scale: {{ $scale }}, dragId: null, sx: 0, sy: 0 }"
                 x-on:mousemove.window="
                     if (dragId !== null) {
-                        const el = $refs.stage.querySelector('[data-slot-id=' + dragId + ']');
+                        const el = document.getElementById('slot-' + dragId);
                         if (el) {
                             const s = $refs.stage.getBoundingClientRect();
                             el.style.left = Math.max(0, Math.min($event.clientX - s.left - sx, s.width)) + 'px';
@@ -33,7 +33,7 @@
                 "
                 x-on:mouseup.window="
                     if (dragId !== null) {
-                        const el = $refs.stage.querySelector('[data-slot-id=' + dragId + ']');
+                        const el = document.getElementById('slot-' + dragId);
                         if (el) {
                             const x = Math.round(parseFloat(el.style.left) / scale);
                             const y = Math.round(parseFloat(el.style.top) / scale);
@@ -59,7 +59,7 @@
                     @foreach ($record->slots as $slot)
                         <div
                             wire:key="slot-{{ $slot->id }}"
-                            data-slot-id="{{ $slot->id }}"
+                            id="slot-{{ $slot->id }}"
                             x-on:mousedown="
                                 if ($event.target.closest('[data-controls]')) return;
                                 dragId = {{ $slot->id }};
