@@ -120,6 +120,7 @@
 
             document.addEventListener('mousedown', (e) => {
                 const slot = e.target.closest('.slot-draggable');
+                console.log('[JEMO] mousedown — slot match:', !! slot, 'target:', e.target);
                 if (! slot) return;
                 if (e.target.closest('[data-controls]')) return; // los controles no arrastran
                 const stage = document.getElementById('slot-stage');
@@ -134,6 +135,7 @@
                 };
                 slot.style.cursor = 'grabbing';
                 e.preventDefault();
+                console.log('[JEMO] drag START id=', drag.id);
             });
 
             document.addEventListener('mousemove', (e) => {
