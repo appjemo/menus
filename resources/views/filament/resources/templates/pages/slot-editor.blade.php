@@ -20,33 +20,12 @@
         {{-- Escenario: video + slots arrastrables --}}
         <div class="overflow-auto rounded-xl bg-gray-950 p-4">
             <div
-                x-data="{ scale: {{ $scale }}, dragId: null, sx: 0, sy: 0 }"
-                x-on:mousemove.window="
-                    if (dragId !== null) {
-                        const el = document.getElementById('slot-' + dragId);
-                        if (el) {
-                            const s = $refs.stage.getBoundingClientRect();
-                            el.style.left = Math.max(0, Math.min($event.clientX - s.left - sx, s.width)) + 'px';
-                            el.style.top = Math.max(0, Math.min($event.clientY - s.top - sy, s.height)) + 'px';
-                        }
-                    }
-                "
-                x-on:mouseup.window="
-                    if (dragId !== null) {
-                        const el = document.getElementById('slot-' + dragId);
-                        if (el) {
-                            const x = Math.round(parseFloat(el.style.left) / scale);
-                            const y = Math.round(parseFloat(el.style.top) / scale);
-                            el.style.cursor = 'grab';
-                            $wire.updatePosition(dragId, x, y);
-                        }
-                        dragId = null;
-                    }
-                "
+                x-data="{}"
                 class="relative mx-auto"
                 style="width: {{ $displayW }}px; height: {{ $displayH }}px;"
             >
-                <div x-ref="stage" class="absolute inset-0 overflow-hidden rounded-lg"
+                <div id="slot-stage" data-scale="{{ $scale }}"
+                     class="absolute inset-0 overflow-hidden rounded-lg"
                      style="background: linear-gradient(135deg,#1a1a2e,#16213e);">
                     @if ($videoUrl)
                         <video class="pointer-events-none absolute inset-0 h-full w-full object-fill" autoplay loop muted playsinline>
@@ -60,16 +39,8 @@
                         <div
                             wire:key="slot-{{ $slot->id }}"
                             id="slot-{{ $slot->id }}"
-                            x-on:mousedown="
-                                if ($event.target.closest('[data-controls]')) return;
-                                dragId = {{ $slot->id }};
-                                const r = $el.getBoundingClientRect();
-                                sx = $event.clientX - r.left;
-                                sy = $event.clientY - r.top;
-                                $el.style.cursor = 'grabbing';
-                                $event.preventDefault();
-                            "
-                            class="group absolute select-none"
+                            data-slot-id="{{ $slot->id }}"
+                            class="slot-draggable group absolute select-none"
                             style="left: {{ $slot->pos_x * $scale }}px; top: {{ $slot->pos_y * $scale }}px; cursor: grab;"
                         >
                             @php
@@ -136,4 +107,49 @@
             Base video resolution: {{ $videoW }}×{{ $videoH }} px. Positions are saved in those coordinates and scaled on each screen.
         </p>
     </div>
+
+    @script
+    <script>
+        // Arrastre de precios con JS puro (delegación a nivel document; robusto ante re-render de Livewire)
+        let drag = null;
+
+        document.addEventListener('mousedown', (e) => {
+            const slot = e.target.closest('.slot-draggable');
+            if (! slot) return;
+            if (e.target.closest('[data-controls]')) return; // no arrastrar al usar los controles
+            const stage = document.getElementById('slot-stage');
+            if (! stage) return;
+            const r = slot.getBoundingClientRect();
+            drag = {
+                el: slot,
+                id: parseInt(slot.dataset.slotId),
+                scale: parseFloat(stage.dataset.scale || '1'),
+                offX: e.clientX - r.left,
+                offY: e.clientY - r.top,
+            };
+            slot.style.cursor = 'grabbing';
+            e.preventDefault();
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            if (! drag) return;
+            const stage = document.getElementById('slot-stage');
+            const s = stage.getBoundingClientRect();
+            const x = Math.max(0, Math.min(e.clientX - s.left - drag.offX, s.width));
+            const y = Math.max(0, Math.min(e.clientY - s.top - drag.offY, s.height));
+            drag.el.style.left = x + 'px';
+            drag.el.style.top = y + 'px';
+        });
+
+        document.addEventListener('mouseup', () => {
+            if (! drag) return;
+            const baseX = Math.round(parseFloat(drag.el.style.left) / drag.scale);
+            const baseY = Math.round(parseFloat(drag.el.style.top) / drag.scale);
+            drag.el.style.cursor = 'grab';
+            const id = drag.id;
+            drag = null;
+            $wire.updatePosition(id, baseX, baseY);
+        });
+    </script>
+    @endscript
 </x-filament-panels::page>
