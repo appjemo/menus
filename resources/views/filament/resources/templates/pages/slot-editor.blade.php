@@ -19,16 +19,16 @@
 
         {{-- Escenario: video + slots arrastrables --}}
         <div class="overflow-auto rounded-xl bg-gray-950 p-4">
-            <div class="mx-auto" style="width: {{ $displayW }}px;">
+            <div style="width: {{ $displayW }}px; margin: 0 auto;">
                 <div id="slot-stage" x-data="{}" data-scale="{{ $scale }}"
-                     class="relative shrink-0 overflow-hidden rounded-lg"
-                     style="width: {{ $displayW }}px; height: {{ $displayH }}px; background: linear-gradient(135deg,#1a1a2e,#16213e);">
+                     class="rounded-lg"
+                     style="position: relative; overflow: hidden; width: {{ $displayW }}px; height: {{ $displayH }}px; background: linear-gradient(135deg,#1a1a2e,#16213e);">
                     @if ($videoUrl)
-                        <video class="pointer-events-none absolute inset-0 h-full w-full object-fill" autoplay loop muted playsinline>
+                        <video style="position:absolute; inset:0; width:100%; height:100%; object-fit:fill; pointer-events:none;" autoplay loop muted playsinline>
                             <source src="{{ $videoUrl }}" type="video/mp4">
                         </video>
                     @else
-                        <div class="pointer-events-none absolute inset-0 flex items-center justify-center text-gray-500">No video — upload one in the template</div>
+                        <div style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; color:#6b7280; pointer-events:none;">No video — upload one in the template</div>
                     @endif
 
                     @foreach ($record->slots as $slot)
@@ -36,8 +36,8 @@
                             wire:key="slot-{{ $slot->id }}"
                             id="slot-{{ $slot->id }}"
                             data-slot-id="{{ $slot->id }}"
-                            class="slot-draggable group absolute select-none"
-                            style="left: {{ $slot->pos_x * $scale }}px; top: {{ $slot->pos_y * $scale }}px; cursor: grab;"
+                            class="slot-draggable group select-none"
+                            style="position: absolute; left: {{ $slot->pos_x * $scale }}px; top: {{ $slot->pos_y * $scale }}px; cursor: grab; user-select: none;"
                         >
                             @php
                                 $inline = ($slot->layout ?? 'stacked') === 'inline';
@@ -59,7 +59,7 @@
 
                             {{-- Controles: no inician arrastre (mousedown.stop) --}}
                             <div data-controls x-on:mousedown.stop
-                                 class="absolute -top-10 left-0 flex items-center gap-1 rounded-lg bg-gray-900/95 px-1.5 py-1 opacity-0 shadow-lg ring-1 ring-white/10 transition group-hover:opacity-100">
+                                 style="position:absolute; top:-2.5rem; left:0; display:flex; align-items:center; gap:0.25rem; border-radius:0.5rem; background:rgba(17,24,39,.95); padding:0.25rem 0.375rem; box-shadow:0 4px 12px rgba(0,0,0,.4);">
                                 <button type="button"
                                     wire:click="setFontSize({{ $slot->id }}, {{ max(12, $slot->font_size - 8) }})"
                                     class="rounded bg-gray-700 px-2 py-0.5 text-xs font-semibold text-white hover:bg-gray-600">A-</button>
