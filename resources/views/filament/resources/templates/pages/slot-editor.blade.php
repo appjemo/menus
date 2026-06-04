@@ -19,14 +19,10 @@
 
         {{-- Escenario: video + slots arrastrables --}}
         <div class="overflow-auto rounded-xl bg-gray-950 p-4">
-            <div
-                x-data="{}"
-                class="relative mx-auto"
-                style="width: {{ $displayW }}px; height: {{ $displayH }}px;"
-            >
-                <div id="slot-stage" data-scale="{{ $scale }}"
-                     class="absolute inset-0 overflow-hidden rounded-lg"
-                     style="background: linear-gradient(135deg,#1a1a2e,#16213e);">
+            <div class="mx-auto" style="width: {{ $displayW }}px;">
+                <div id="slot-stage" x-data="{}" data-scale="{{ $scale }}"
+                     class="relative shrink-0 overflow-hidden rounded-lg"
+                     style="width: {{ $displayW }}px; height: {{ $displayH }}px; background: linear-gradient(135deg,#1a1a2e,#16213e);">
                     @if ($videoUrl)
                         <video class="pointer-events-none absolute inset-0 h-full w-full object-fill" autoplay loop muted playsinline>
                             <source src="{{ $videoUrl }}" type="video/mp4">
