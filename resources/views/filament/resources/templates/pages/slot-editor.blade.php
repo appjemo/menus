@@ -157,8 +157,10 @@
                 const id = drag.id;
                 const root = drag.el.closest('[wire\\:id]');
                 drag = null;
-                if (root && window.Livewire) {
-                    window.Livewire.find(root.getAttribute('wire:id')).call('updatePosition', id, baseX, baseY);
+                const wireId = root && root.getAttribute('wire:id');
+                console.log('[JEMO] drop → save id=', id, 'x=', baseX, 'y=', baseY, '| wireId=', wireId);
+                if (wireId && window.Livewire) {
+                    window.Livewire.find(wireId).call('updatePosition', id, baseX, baseY);
                 }
             });
         })();
