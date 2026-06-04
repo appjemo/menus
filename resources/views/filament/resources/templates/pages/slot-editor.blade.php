@@ -57,41 +57,41 @@
                                 <div style="white-space:nowrap;">${{ $slot->product ? number_format((float) $slot->product->price, 2) : '--' }}</div>
                             </div>
 
+                            @php
+                                $btn = 'border:0; border-radius:0.25rem; background:#374151; color:#fff; font-size:0.75rem; font-weight:600; padding:0.15rem 0.5rem; cursor:pointer; line-height:1.2;';
+                                $ctrl = 'height:1.6rem; border:0; border-radius:0.25rem; background:#374151; color:#fff; font-size:0.75rem; cursor:pointer;';
+                            @endphp
                             {{-- Controles: no inician arrastre (mousedown.stop) --}}
                             <div data-controls x-on:mousedown.stop
-                                 style="position:absolute; top:-2.5rem; left:0; display:flex; align-items:center; gap:0.25rem; border-radius:0.5rem; background:rgba(17,24,39,.95); padding:0.25rem 0.375rem; box-shadow:0 4px 12px rgba(0,0,0,.4);">
-                                <button type="button"
-                                    wire:click="setFontSize({{ $slot->id }}, {{ max(12, $slot->font_size - 8) }})"
-                                    class="rounded bg-gray-700 px-2 py-0.5 text-xs font-semibold text-white hover:bg-gray-600">A-</button>
-                                <button type="button"
-                                    wire:click="setFontSize({{ $slot->id }}, {{ $slot->font_size + 8 }})"
-                                    class="rounded bg-gray-700 px-2 py-0.5 text-xs font-semibold text-white hover:bg-gray-600">A+</button>
+                                 style="position:absolute; top:-2.6rem; left:0; display:flex; align-items:center; gap:0.25rem; border-radius:0.5rem; background:rgba(17,24,39,.95); padding:0.3rem 0.4rem; box-shadow:0 4px 12px rgba(0,0,0,.4); white-space:nowrap;">
+                                <button type="button" style="{{ $btn }}"
+                                    wire:click="setFontSize({{ $slot->id }}, {{ max(12, $slot->font_size - 8) }})">A-</button>
+                                <button type="button" style="{{ $btn }}"
+                                    wire:click="setFontSize({{ $slot->id }}, {{ $slot->font_size + 8 }})">A+</button>
                                 <input type="color" value="{{ $slot->font_color }}"
                                     x-on:change="$wire.setColor({{ $slot->id }}, $event.target.value)"
                                     title="Text color"
-                                    class="h-6 w-6 cursor-pointer rounded border-0 bg-transparent p-0">
+                                    style="height:1.6rem; width:1.8rem; border:0; border-radius:0.25rem; background:transparent; padding:0; cursor:pointer;">
                                 <select
                                     x-on:change="$wire.setFontFamily({{ $slot->id }}, $event.target.value)"
                                     title="Font"
-                                    class="h-6 rounded border-0 bg-gray-700 py-0 pl-1 pr-5 text-xs text-white">
-                                    <option value="">Font…</option>
+                                    style="{{ $ctrl }} padding:0 0.4rem; max-width:9rem;">
+                                    <option value="" style="background:#374151;color:#fff;">Font…</option>
                                     @foreach (\App\Filament\Resources\Templates\Pages\SlotEditor::FONTS as $css => $label)
-                                        <option value="{{ $css }}" @selected($slot->font_family === $css)>{{ $label }}</option>
+                                        <option value="{{ $css }}" @selected($slot->font_family === $css) style="background:#374151;color:#fff;">{{ $label }}</option>
                                     @endforeach
                                 </select>
-                                <button type="button"
+                                <button type="button" style="{{ $btn }}"
                                     wire:click="toggleLayout({{ $slot->id }})"
-                                    title="{{ $inline ? 'Same line' : 'Stacked' }}"
-                                    class="rounded bg-gray-700 px-2 py-0.5 text-xs font-semibold text-white hover:bg-gray-600">{{ $inline ? '↔' : '↕' }}</button>
+                                    title="{{ $inline ? 'Same line' : 'Stacked' }}">{{ $inline ? '↔' : '↕' }}</button>
                                 @if ($inline)
-                                    <button type="button" wire:click="setWidth({{ $slot->id }}, -40)" title="Narrower"
-                                        class="rounded bg-gray-700 px-2 py-0.5 text-xs font-semibold text-white hover:bg-gray-600">W-</button>
-                                    <button type="button" wire:click="setWidth({{ $slot->id }}, 40)" title="Wider"
-                                        class="rounded bg-gray-700 px-2 py-0.5 text-xs font-semibold text-white hover:bg-gray-600">W+</button>
+                                    <button type="button" style="{{ $btn }}" wire:click="setWidth({{ $slot->id }}, -40)" title="Narrower">W-</button>
+                                    <button type="button" style="{{ $btn }}" wire:click="setWidth({{ $slot->id }}, 40)" title="Wider">W+</button>
                                 @endif
                                 <button type="button"
+                                    style="{{ $btn }} background:#dc2626;"
                                     wire:click="removeSlot({{ $slot->id }})"
-                                    class="rounded bg-red-600 px-2 py-0.5 text-xs font-semibold text-white hover:bg-red-500">✕</button>
+                                    title="Remove">✕</button>
                             </div>
                         </div>
                     @endforeach
