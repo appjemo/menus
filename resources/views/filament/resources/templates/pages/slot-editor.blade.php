@@ -108,48 +108,54 @@
         </p>
     </div>
 
-    @script
     <script>
-        // Arrastre de precios con JS puro (delegación a nivel document; robusto ante re-render de Livewire)
-        let drag = null;
+        // Arrastre de precios con JS puro. Guard para adjuntar listeners una sola vez
+        // (sobrevive a wire:navigate y re-render de Livewire).
+        (function () {
+            if (window.__jemoSlotDragInit) return;
+            window.__jemoSlotDragInit = true;
 
-        document.addEventListener('mousedown', (e) => {
-            const slot = e.target.closest('.slot-draggable');
-            if (! slot) return;
-            if (e.target.closest('[data-controls]')) return; // no arrastrar al usar los controles
-            const stage = document.getElementById('slot-stage');
-            if (! stage) return;
-            const r = slot.getBoundingClientRect();
-            drag = {
-                el: slot,
-                id: parseInt(slot.dataset.slotId),
-                scale: parseFloat(stage.dataset.scale || '1'),
-                offX: e.clientX - r.left,
-                offY: e.clientY - r.top,
-            };
-            slot.style.cursor = 'grabbing';
-            e.preventDefault();
-        });
+            let drag = null;
 
-        document.addEventListener('mousemove', (e) => {
-            if (! drag) return;
-            const stage = document.getElementById('slot-stage');
-            const s = stage.getBoundingClientRect();
-            const x = Math.max(0, Math.min(e.clientX - s.left - drag.offX, s.width));
-            const y = Math.max(0, Math.min(e.clientY - s.top - drag.offY, s.height));
-            drag.el.style.left = x + 'px';
-            drag.el.style.top = y + 'px';
-        });
+            document.addEventListener('mousedown', (e) => {
+                const slot = e.target.closest('.slot-draggable');
+                if (! slot) return;
+                if (e.target.closest('[data-controls]')) return; // los controles no arrastran
+                const stage = document.getElementById('slot-stage');
+                if (! stage) return;
+                const r = slot.getBoundingClientRect();
+                drag = {
+                    el: slot,
+                    id: parseInt(slot.dataset.slotId),
+                    scale: parseFloat(stage.dataset.scale || '1'),
+                    offX: e.clientX - r.left,
+                    offY: e.clientY - r.top,
+                };
+                slot.style.cursor = 'grabbing';
+                e.preventDefault();
+            });
 
-        document.addEventListener('mouseup', () => {
-            if (! drag) return;
-            const baseX = Math.round(parseFloat(drag.el.style.left) / drag.scale);
-            const baseY = Math.round(parseFloat(drag.el.style.top) / drag.scale);
-            drag.el.style.cursor = 'grab';
-            const id = drag.id;
-            drag = null;
-            $wire.updatePosition(id, baseX, baseY);
-        });
+            document.addEventListener('mousemove', (e) => {
+                if (! drag) return;
+                const stage = document.getElementById('slot-stage');
+                if (! stage) return;
+                const s = stage.getBoundingClientRect();
+                drag.el.style.left = Math.max(0, Math.min(e.clientX - s.left - drag.offX, s.width)) + 'px';
+                drag.el.style.top = Math.max(0, Math.min(e.clientY - s.top - drag.offY, s.height)) + 'px';
+            });
+
+            document.addEventListener('mouseup', () => {
+                if (! drag) return;
+                const baseX = Math.round(parseFloat(drag.el.style.left) / drag.scale);
+                const baseY = Math.round(parseFloat(drag.el.style.top) / drag.scale);
+                drag.el.style.cursor = 'grab';
+                const id = drag.id;
+                const root = drag.el.closest('[wire\\:id]');
+                drag = null;
+                if (root && window.Livewire) {
+                    window.Livewire.find(root.getAttribute('wire:id')).call('updatePosition', id, baseX, baseY);
+                }
+            });
+        })();
     </script>
-    @endscript
 </x-filament-panels::page>
